@@ -1,4 +1,4 @@
---/* FILERUN: 2017.01.23 */
+--/* FILERUN: 2017.03.18 */
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -103,28 +103,29 @@ INSERT INTO `df_modules_metadata_fields`
 (0, 'zoho_collab', 'Zoho Collaborative Editing (System)', '', '', 0, 0, 1, NULL, NULL),
 (0, 'Tags', '', 'multiple', '', 0, 0, 1, 'MWG->Keywords', NULL),
 
-(3, 'Width', '', '', '', 1, 0, 0, 'MWG->width', 1),
-(3, 'Height', '', '', '', 1, 0, 0, 'MWG->height', 2),
+(3, 'Width', '', 'small', '', 1, 0, 0, 'MWG->width', 1),
+(3, 'Height', '', 'small', '', 1, 0, 0, 'MWG->height', 2),
 (3, 'Date taken', '', 'date', '', 1, 0, 0, 'MWG->DateCreated', 3),
 (3, 'Author', '', 'multiple', '', 1, 0, 0, 'MWG->Creator', 4),
 (3, 'Description', '', 'large', '', 1, 0, 0, 'MWG->Description', 5),
 (3, 'Copyright', '', '', '', 1, 0, 0, 'MWG->Copyright', 6),
-(3, 'GPS latitude', '', '', '', 1, 0, 0, 'MWG->GPSlatitude', 7),
-(3, 'GPS longitude', '', '', '', 1, 0, 0, 'MWG->GPSlongitude', 8),
+(3, 'GPS latitude', '', 'small', '', 1, 0, 0, 'MWG->GPSlatitude', 7),
+(3, 'GPS longitude', '', 'small', '', 1, 0, 0, 'MWG->GPSlongitude', 8),
 
 (4, 'Movie title', '', '', '', 1, 0, 0, 'info->quicktime->moov->subatoms->3->subatoms->0->subatoms->1->subatoms->0->data', 1),
-(4, 'Width', '', '', '', 1, 0, 0, 'info->video->resolution_x', 2),
-(4, 'Height', '', '', '', 1, 0, 0, 'info->video->resolution_y', 3),
+(4, 'Width', '', 'small', '', 1, 0, 0, 'info->video->resolution_x', 2),
+(4, 'Height', '', 'small', '', 1, 0, 0, 'info->video->resolution_y', 3),
 (4, 'Codec', '', '', '', 1, 0, 0, 'info->video->dataformat', 4),
 
 (5, 'Artist', '', '', '', 1, 0, 0, 'info->comments->artist', 1),
 (5, 'Title', '', '', '', 1, 0, 0, 'info->comments->title', 2),
 (5, 'Album', '', '', '', 1, 0, 0, 'info->comments->album', 3),
-(5, 'Duration', '', '', '', 1, 0, 0, 'info->playtime_string', 4),
+(5, 'Duration', '', 'small', '', 1, 0, 0, 'info->playtime_string', 4),
 (5, 'Codec', '', '', '', 1, 0, 0, 'info->audio->codec', 5),
 
 (6, 'Author', '', '', '', 1, 0, 0, NULL, 1),
-(6, 'Description', '', '', '', 1, 0, 0,  NULL, 2);
+(6, 'Description', '', '', '', 1, 0, 0,  NULL, 2),
+(0, 'Rating', '', 'stars', '', 1, 0, 1, 'Rating', NULL);
 
 
 
@@ -273,7 +274,6 @@ CREATE TABLE IF NOT EXISTS `df_modules_user_roles` (
   `create_folder` smallint(1) NOT NULL DEFAULT '1',
   `space_quota_max` int(20) DEFAULT NULL,
   `space_quota_current` int(20) NOT NULL DEFAULT '0',
-  `traffic_quota_max` int(20) DEFAULT NULL,
   `readonly` smallint(1) DEFAULT NULL,
   `upload` smallint(1) DEFAULT NULL,
   `upload_max_size` BIGINT( 20 ) NULL DEFAULT NULL,
@@ -351,7 +351,7 @@ CREATE TABLE IF NOT EXISTS `df_settings` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 INSERT INTO `df_settings` (`var`, `val`) VALUES
-('currentVersion', '2017.01.23'),
+('currentVersion', '2017.03.18'),
 ('app_title', 'FileRun'),
 ('smtp_enable', '0'),
 ('smtp_host', ''),
@@ -391,7 +391,6 @@ INSERT INTO `df_settings` (`var`, `val`) VALUES
 ('thumbnails_ffmpeg', '1'),
 ('thumbnails_ffmpeg_path', 'ffmpeg'),
 ('thumbnails_ffmpeg_ext', 'mpg,mpeg,mp4,mov,avi,divx,mkv,wmv,rm,flv,asx,asf,swf,3gp,3g2,m4v,m2ts,mts,m2v'),
-('system_traffic_quota_reset_date', ''),
 ('versioning_max', '2'),
 ('quota_warning_level', '90'),
 ('ui_default_language', 'english'),
@@ -427,7 +426,7 @@ INSERT INTO `df_settings` (`var`, `val`) VALUES
 ('logout_inactivity', '30'),
 ('auth_plugin', ''),
 ('auth_allow_local', '1'),
-('oauth2', '1'),
+('oauth2', '0'),
 ('notifications_template', '<div style="font-family:tahoma,arial,verdana,sans-serif;font-size:13px;">\n		Hi {$info.userInfo.name},<br>\n		<br>\n\n		{foreach from=$info.actions item=action}\n			{$action.message}\n		{/foreach}\n\n		<br>\n		Best regards,<br>\n		<br>\n		<a href="{$config.url.root}">{$config.url.root}</a>\n</div>'),
 ('notifications_subject_template', '{$settings.app_title|safeHTML} notifications ({$info.actions[0].info.userInfo.name}: {$info.actions[0].info.actionDescription})'),
 ('ui_media_folders_music_enable', '1'),
@@ -450,8 +449,8 @@ CREATE TABLE IF NOT EXISTS `df_users` (
   `failed_login_attempts` smallint(1) NOT NULL DEFAULT '0',
   `last_access_date` timestamp NULL DEFAULT NULL,
   `last_notif_delivery_date` timestamp NULL DEFAULT NULL,
-  `last_login_date` datetime NOT NULL DEFAULT '2002-02-02 00:00:00',
-  `last_logout_date` datetime NOT NULL DEFAULT '2002-02-02 00:00:00',
+  `last_login_date` DATETIME NULL DEFAULT NULL,
+  `last_logout_date` DATETIME NULL DEFAULT NULL,
   `email` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
   `receive_notifications` SMALLINT( 1 ) NOT NULL DEFAULT '0',
   `new_email` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
@@ -493,8 +492,6 @@ CREATE TABLE IF NOT EXISTS `df_users_permissions` (
   `homefolder` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `space_quota_max` int(20) DEFAULT NULL,
   `space_quota_current` int(20) NOT NULL DEFAULT '0',
-  `traffic_quota_max` int(20) DEFAULT NULL,
-  `traffic_quota_current` BIGINT NOT NULL DEFAULT  '0',
   `readonly` smallint(1) DEFAULT NULL,
   `upload` smallint(1) DEFAULT NULL,
   `upload_max_size` BIGINT( 20 ) NULL DEFAULT NULL,
@@ -514,8 +511,8 @@ CREATE TABLE IF NOT EXISTS `df_users_permissions` (
   UNIQUE (`uid`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-INSERT INTO `df_users_permissions` (`uid`, `admin_users`, `admin_roles`, `admin_notifications`, `admin_logs`, `admin_metadata`, `admin_over`, `admin_max_users`, `admin_homefolder_template`, `homefolder`, `space_quota_max`, `space_quota_current`, `traffic_quota_max`, `traffic_quota_current`, `readonly`, `upload`, `download`, `download_folders`, `read_comments`, `write_comments`, `email`, `weblink`, `share`, `metadata`, `file_history`) VALUES
-(1, 0, 0, 0, 0, 0, '', 0, '', '/user-files/superuser', NULL, 0, NULL, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+INSERT INTO `df_users_permissions` (`uid`, `admin_users`, `admin_roles`, `admin_notifications`, `admin_logs`, `admin_metadata`, `admin_over`, `admin_max_users`, `admin_homefolder_template`, `homefolder`, `space_quota_max`, `space_quota_current`,  `readonly`, `upload`, `download`, `download_folders`, `read_comments`, `write_comments`, `email`, `weblink`, `share`, `metadata`, `file_history`) VALUES
+(1, 0, 0, 0, 0, 0, '', 0, '', '/user-files/superuser', NULL, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 
 
 CREATE TABLE IF NOT EXISTS `df_users_sessions` (
