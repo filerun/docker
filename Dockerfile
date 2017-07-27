@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
         libpng12-dev \
+	dcraw \
         libcurl4-gnutls-dev \
         libmcrypt-dev \
         locales \
