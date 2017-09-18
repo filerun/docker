@@ -1,4 +1,4 @@
---/* FILERUN: 2017.03.18 */
+--/* FILERUN: 2017.09.18 */
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -351,7 +351,7 @@ CREATE TABLE IF NOT EXISTS `df_settings` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 INSERT INTO `df_settings` (`var`, `val`) VALUES
-('currentVersion', '2017.03.18'),
+('currentVersion', '2017.09.18'),
 ('app_title', 'FileRun'),
 ('smtp_enable', '0'),
 ('smtp_host', ''),
@@ -456,6 +456,7 @@ CREATE TABLE IF NOT EXISTS `df_users` (
   `new_email` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
   `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `name2` VARCHAR( 100 ) COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+  `phone` VARCHAR(255) COLLATE utf8_unicode_ci NULL DEFAULT NULL,
   `company` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
   `website` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
   `description` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL,
@@ -519,6 +520,7 @@ CREATE TABLE IF NOT EXISTS `df_users_sessions` (
 `id` mediumint(9) NOT NULL AUTO_INCREMENT,
   `username` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `token` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `csrf_token` VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL,
   `user_agent` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `ip_address` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
