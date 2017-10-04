@@ -1,4 +1,4 @@
---/* FILERUN: 2017.09.18 */
+--/* FILERUN: 2017.09.25 */
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -351,8 +351,8 @@ CREATE TABLE IF NOT EXISTS `df_settings` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 INSERT INTO `df_settings` (`var`, `val`) VALUES
-('currentVersion', '2017.09.18'),
-('app_title', 'FileRun'),
+('currentVersion', '2017.09.25'),
+('app_title', 'FileRun (powered by Docker)'),
 ('smtp_enable', '0'),
 ('smtp_host', ''),
 ('smtp_port', ''),
@@ -388,7 +388,7 @@ INSERT INTO `df_settings` (`var`, `val`) VALUES
 ('thumbnails_imagemagick_path', 'gm'),
 ('thumbnails_size', '140'),
 ('thumbnails_imagemagick_ext', 'psd,psb,eps,tst,plt,ai,pdf,jpg,jpeg,gif,png,jpe,erf,dng,cr2,crw,3fr,fff,ppm,raw,kdc,dcr,nef,mef,mos,nrw,orf,raf,mrw,mdc,rw2,pef,x3f,srw,arw,iiq'),
-('thumbnails_ffmpeg', '1'),
+('thumbnails_ffmpeg', '0'),
 ('thumbnails_ffmpeg_path', 'ffmpeg'),
 ('thumbnails_ffmpeg_ext', 'mpg,mpeg,mp4,mov,avi,divx,mkv,wmv,rm,flv,asx,asf,swf,3gp,3g2,m4v,m2ts,mts,m2v'),
 ('versioning_max', '2'),
@@ -430,7 +430,8 @@ INSERT INTO `df_settings` (`var`, `val`) VALUES
 ('notifications_template', '<div style="font-family:tahoma,arial,verdana,sans-serif;font-size:13px;">\n		Hi {$info.userInfo.name},<br>\n		<br>\n\n		{foreach from=$info.actions item=action}\n			{$action.message}\n		{/foreach}\n\n		<br>\n		Best regards,<br>\n		<br>\n		<a href="{$config.url.root}">{$config.url.root}</a>\n</div>'),
 ('notifications_subject_template', '{$settings.app_title|safeHTML} notifications ({$info.actions[0].info.userInfo.name}: {$info.actions[0].info.actionDescription})'),
 ('ui_media_folders_music_enable', '1'),
-('ui_media_folders_photos_enable', '1');
+('ui_media_folders_photos_enable', '1'),
+('download_accelerator', 'xsendfile');
 
 CREATE TABLE IF NOT EXISTS `df_users` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
