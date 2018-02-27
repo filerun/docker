@@ -1,34 +1,32 @@
-FROM php:7.0-apache
+FROM php:7.2.2-apache
 
-# add PHP extensions and third-party software
+# add PHP, extensions and third-party software
 RUN apt-get update \
     && apt-get install -y \
         libapache2-mod-xsendfile \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
-        libmcrypt-dev \
-        libpng12-dev \
         dcraw \
         libcurl4-gnutls-dev \
-        libmcrypt-dev \
         locales \
         graphicsmagick \
         mysql-client \
         unzip \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-    && docker-php-ext-install -j$(nproc) mcrypt pdo_mysql exif zip gd opcache
+    && docker-php-ext-install -j$(nproc) pdo_mysql exif zip gd opcache
 
 # set recommended PHP.ini settings
 # see http://docs.filerun.com/php_configuration
 COPY filerun-optimization.ini /usr/local/etc/php/conf.d/
 
-# Install Ioncube
+# Install ionCube
 RUN curl -O http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
  && tar xvfz ioncube_loaders_lin_x86-64.tar.gz \
  && PHP_EXT_DIR=$(php-config --extension-dir) \
- && cp "ioncube/ioncube_loader_lin_7.0.so" $PHP_EXT_DIR \
- && echo "zend_extension=ioncube_loader_lin_7.0.so" >> /usr/local/etc/php/conf.d/00_ioncube_loader_lin_7.0.ini \
+ && cp "ioncube/ioncube_loader_lin_7.2.so" $PHP_EXT_DIR \
+ && echo "zend_extension=ioncube_loader_lin_7.2.so" >> /usr/local/etc/php/conf.d/00_ioncube_loader_lin_7.2.ini \
  && rm -rf ioncube ioncube_loaders_lin_x86-64.tar.gz
 
 # Enable Apache XSendfile
@@ -40,7 +38,7 @@ RUN { \
 	&& a2enconf filerun
 
 # Install FileRun
-RUN curl -o /filerun.zip -L https://www.filerun.com/download-latest \
+RUN curl -o /filerun.zip -L https://www.filerun.com/download-latest-php71 \
  && mkdir /user-files \
  && chown www-data:www-data /user-files
 
