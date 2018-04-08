@@ -11,6 +11,7 @@ RUN apt-get update \
         locales \
         graphicsmagick \
         mysql-client \
+        wget \
         unzip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
@@ -22,7 +23,7 @@ RUN apt-get update \
 COPY filerun-optimization.ini /usr/local/etc/php/conf.d/
 
 # Install ionCube
-RUN curl -O http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
+RUN wget https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
  && tar xvfz ioncube_loaders_lin_x86-64.tar.gz \
  && PHP_EXT_DIR=$(php-config --extension-dir) \
  && cp "ioncube/ioncube_loader_lin_7.2.so" $PHP_EXT_DIR \
@@ -38,9 +39,16 @@ RUN { \
 	&& a2enconf filerun
 
 # Install FileRun
-RUN curl -o /filerun.zip -L https://www.filerun.com/download-latest-php71 \
+RUN wget -O /filerun.zip https://www.filerun.com/download-latest-php71 \
  && mkdir /user-files \
  && chown www-data:www-data /user-files
+
+ENV DB_TYPE mysql
+ENV DB_HOST db
+ENV DB_PORT 3306
+ENV DB_NAME filerun
+ENV DB_USER filerun
+ENV DB_PASS filerun
 
 COPY db.sql /filerun.setup.sql
 COPY autoconfig.php /
@@ -52,6 +60,7 @@ COPY ./wait-for-it.sh /
 COPY ./import-db.sh /
 RUN chmod +x /wait-for-it.sh
 RUN chmod +x /import-db.sh
+RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["apache2-foreground"]
