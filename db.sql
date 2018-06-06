@@ -1,5 +1,4 @@
--- /* FILERUN: 2018.02.13 */
-
+-- /* FILERUN: 2018.05.22 */
 
 CREATE TABLE IF NOT EXISTS `df_file_logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -370,7 +369,7 @@ CREATE TABLE IF NOT EXISTS `df_settings` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `df_settings` (`var`, `val`) VALUES
-('currentVersion', '2018.02.13'),
+('currentVersion', '2018.05.22'),
 ('app_title', 'FileRun'),
 ('smtp_enable', '0'),
 ('smtp_host', ''),
@@ -401,13 +400,15 @@ INSERT INTO `df_settings` (`var`, `val`) VALUES
 ('password_recovery_enable', '1'),
 ('password_recovery_force_change', '1'),
 ('search_enable', '0'),
+('search_elastic_host_url', 'http://localhost:9200'),
+('search_default_mode', 'filename'),
 ('search_tika_path', '/path/to/tika-app-1.12.jar'),
 ('thumbnails_enable', '1'),
 ('thumbnails_imagemagick', '1'),
 ('thumbnails_imagemagick_path', 'gm'),
 ('thumbnails_size', '140'),
 ('thumbnails_imagemagick_ext', 'psd,psb,eps,tst,plt,ai,pdf,jpg,jpeg,gif,png,jpe,erf,dng,cr2,crw,3fr,fff,ppm,raw,kdc,dcr,nef,mef,mos,nrw,orf,raf,mrw,mdc,rw2,pef,x3f,srw,arw,iiq,svg'),
-('thumbnails_ffmpeg', '0'),
+('thumbnails_ffmpeg', '1'),
 ('thumbnails_ffmpeg_path', 'ffmpeg'),
 ('thumbnails_ffmpeg_ext', 'mpg,mpeg,mp4,mov,avi,divx,mkv,wmv,rm,flv,asx,asf,swf,3gp,3g2,m4v,m2ts,mts,m2v,ogv,webm'),
 ('versioning_max', '2'),

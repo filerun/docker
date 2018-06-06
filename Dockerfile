@@ -6,16 +6,21 @@ RUN apt-get update \
         libapache2-mod-xsendfile \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
-        dcraw \
+        libxml2-dev \
+        libldap2-dev \
         libcurl4-gnutls-dev \
+        dcraw \
         locales \
         graphicsmagick \
+        ffmpeg \
         mysql-client \
         unzip \
+        cron \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-    && docker-php-ext-install -j$(nproc) pdo_mysql exif zip gd opcache
+    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu \
+    && docker-php-ext-install -j$(nproc) pdo_mysql exif zip gd opcache dom ldap
 
 # set recommended PHP.ini settings
 # see http://docs.filerun.com/php_configuration
@@ -38,9 +43,15 @@ RUN { \
 	&& a2enconf filerun
 
 # Install FileRun
-RUN curl -o /filerun.zip -L https://www.filerun.com/download-latest-php71 \
+RUN curl -o /filerun.zip -L https://www.filerun.com/download-latest-php72 \
  && mkdir /user-files \
  && chown www-data:www-data /user-files
+
+ENV FR_DB_HOST db
+ENV FR_DB_PORT 3306
+ENV FR_DB_NAME filerun
+ENV FR_DB_USER filerun
+ENV FR_DB_PASS filerun
 
 COPY db.sql /filerun.setup.sql
 COPY autoconfig.php /
@@ -52,6 +63,7 @@ COPY ./wait-for-it.sh /
 COPY ./import-db.sh /
 RUN chmod +x /wait-for-it.sh
 RUN chmod +x /import-db.sh
+RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["apache2-foreground"]

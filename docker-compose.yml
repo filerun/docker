@@ -4,19 +4,25 @@ services:
   db:
     image: mariadb:10.1
     environment:
-      MYSQL_ROOT_PASSWORD: filerun
-      MYSQL_USER: filerun
-      MYSQL_PASSWORD: filerun
-      MYSQL_DATABASE: filerun
+      MYSQL_ROOT_PASSWORD: your_mysql_root_password
+      MYSQL_USER: your_filerun_username
+      MYSQL_PASSWORD: your_filerun_password
+      MYSQL_DATABASE: your_filerun_database
     volumes:
       - /filerun/db:/var/lib/mysql
 
   web:
+    image: afian/filerun
+    environment:
+      FR_DB_HOST: db
+      FR_DB_PORT: 3306
+      FR_DB_NAME: your_filerun_database
+      FR_DB_USER: your_filerun_username
+      FR_DB_PASS: your_filerun_password
     depends_on:
       - db
     links:
       - db:db
-    image: afian/filerun
     ports:
       - "80:80"
     volumes:
