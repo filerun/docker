@@ -1,4 +1,4 @@
--- /* FILERUN: 2018.05.22 */
+-- /* FILERUN: 2018.11.11 */
 
 CREATE TABLE IF NOT EXISTS `df_file_logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -36,7 +36,7 @@ INSERT INTO `df_file_handlers` (`type`, `ext`, `handler`) VALUES
 (NULL, 'odp', 'webodf'),
 (NULL, 'pdf', 'open_in_browser'),
 (NULL, 'url', 'handle_url'),
-(NULL, 'html', 'open_in_browser'),
+(NULL, 'html', 'html_editor'),
 (NULL, 'kml', 'kml_viewer'),
 (NULL, 'kmz', 'kml_viewer'),
 (NULL, 'gpx', 'bing_kml_viewer'),
@@ -330,6 +330,7 @@ CREATE TABLE IF NOT EXISTS `df_modules_weblinks` (
   `download_terms` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `show_comments` tinyint(1) NOT NULL DEFAULT '0',
   `show_comments_names` tinyint(1) NOT NULL DEFAULT '0',
+  `require_login` TINYINT(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_rnd` (`id_rnd`),
   KEY `uid` (`uid`,`pathid`),
@@ -369,7 +370,7 @@ CREATE TABLE IF NOT EXISTS `df_settings` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `df_settings` (`var`, `val`) VALUES
-('currentVersion', '2018.05.22'),
+('currentVersion', '2018.11.11'),
 ('app_title', 'FileRun'),
 ('smtp_enable', '0'),
 ('smtp_host', ''),
@@ -456,7 +457,9 @@ INSERT INTO `df_settings` (`var`, `val`) VALUES
 ('ui_enable_rating', '1'),
 ('ui_photos_thumbnail_size', '200'),
 ('ui_theme', 'blue'),
-('download_accelerator', 'xsendfile');
+('download_accelerator', 'xsendfile'),
+('search_result_limit', '200'),
+('search_mode', 'broad');
 
 CREATE TABLE IF NOT EXISTS `df_users` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -498,6 +501,7 @@ INSERT INTO `df_users` SET
 `id` = 1,
 `username` = 'superuser',
 `password` = '$2y$10$VJ7O3Fbg6jtwLNAUSD0BF.89ZldVr2Ghgwd2/bqfH8B33yztzhJCu',
+`require_password_change` = 1,
 `registration_date` = NOW(),
 `activated` = 1,
 `name` = 'Superuser';

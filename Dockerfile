@@ -1,4 +1,4 @@
-FROM php:7.2.2-apache
+FROM php:7.2.12-apache
 
 # add PHP, extensions and third-party software
 RUN apt-get update \
@@ -42,8 +42,8 @@ RUN { \
 	} | tee "/etc/apache2/conf-available/filerun.conf" \
 	&& a2enconf filerun
 
-# Install FileRun
-RUN curl -o /filerun.zip -L https://www.filerun.com/download-latest-php72 \
+# Download FileRun installation package
+RUN curl -o /filerun.zip -L https://filerun.com/download-latest-php72 \
  && mkdir /user-files \
  && chown www-data:www-data /user-files
 

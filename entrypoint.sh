@@ -8,6 +8,7 @@ if ! id -u ${APACHE_RUN_USER} > /dev/null 2>&1; then
 	useradd --uid ${APACHE_RUN_USER_ID} --gid ${APACHE_RUN_GROUP_ID} ${APACHE_RUN_USER}
 fi
 
+# Install FileRun on first run
 if [ ! -e /var/www/html/index.php ];  then
 	echo "[FileRun fresh install]"
 	unzip /filerun.zip -d /var/www/html/
