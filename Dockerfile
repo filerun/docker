@@ -19,7 +19,7 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu \
+    && docker-php-ext-configure ldap --with-libdir=lib/arm-linux-gnueabihf \
     && docker-php-ext-install -j$(nproc) pdo_mysql exif zip gd opcache dom ldap
 
 # set recommended PHP.ini settings
@@ -27,12 +27,12 @@ RUN apt-get update \
 COPY filerun-optimization.ini /usr/local/etc/php/conf.d/
 
 # Install ionCube
-RUN curl -O http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
- && tar xvfz ioncube_loaders_lin_x86-64.tar.gz \
+RUN curl -O http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_armv7l.tar.gz \
+ && tar xvfz ioncube_loaders_lin_armv7l.tar.gz \
  && PHP_EXT_DIR=$(php-config --extension-dir) \
  && cp "ioncube/ioncube_loader_lin_7.2.so" $PHP_EXT_DIR \
  && echo "zend_extension=ioncube_loader_lin_7.2.so" >> /usr/local/etc/php/conf.d/00_ioncube_loader_lin_7.2.ini \
- && rm -rf ioncube ioncube_loaders_lin_x86-64.tar.gz
+ && rm -rf ioncube ioncube_loaders_lin_armv7l.tar.gz
 
 # Enable Apache XSendfile
 RUN { \
