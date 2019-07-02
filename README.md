@@ -1,13 +1,13 @@
-![FileRun Logo](http://www.filerun.com/images/long-logo.png)
+![FileRun Logo](https://filerun.com/images/long-logo.png)
 
 What is FileRun?
 ==================
 
-[FileRun](http://www.filerun.com) is a self-hosted Google Drive/Photos/Music alternative. It is a full featured web based file manager with an easy to use user interface.
+[FileRun](https://filerun.com) is a self-hosted Google Drive/Photos/Music alternative. It is a full featured web based file manager with an easy to use user interface.
 
 Installation
 ==================
-See http://docs.filerun.com/docker for the guide.
+See https://docs.filerun.com/docker for the guide.
 
 Default login
 ==================
@@ -25,8 +25,8 @@ See the following document for the [licensing terms](https://goo.gl/wk2FSs).
 
 Issues
 ==================
-If you have any problems with or questions about this image, please [contact us](https://www.filerun.com/contact).
+If you have any problems with or questions about this image, please [contact us](https://filerun.com/contact).
 
 Documentation
 ==================
-For FileRun documentation, please visit http://docs.filerun.com/
+For FileRun documentation, please visit https://docs.filerun.com/
