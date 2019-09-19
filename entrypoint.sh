@@ -4,8 +4,8 @@ set -eux
 # Check if user exists
 if ! id -u ${APACHE_RUN_USER} > /dev/null 2>&1; then
 	echo "The user ${APACHE_RUN_USER} does not exist, creating..."
-	groupadd --gid ${APACHE_RUN_GROUP_ID} ${APACHE_RUN_GROUP}
-	useradd --uid ${APACHE_RUN_USER_ID} --gid ${APACHE_RUN_GROUP_ID} ${APACHE_RUN_USER}
+	groupadd -f -g ${APACHE_RUN_GROUP_ID} ${APACHE_RUN_GROUP}
+	useradd -u ${APACHE_RUN_USER_ID} -g ${APACHE_RUN_GROUP} ${APACHE_RUN_USER}
 fi
 
 # Install FileRun on first run

@@ -528,7 +528,7 @@ CREATE TABLE IF NOT EXISTS `df_users_permissions` (
   UNIQUE (`uid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `df_users_permissions` (`uid`,`admin_users`,`admin_roles`,`admin_notifications`,`admin_logs`,`admin_metadata`, `admin_over`,`admin_max_users`,`admin_homefolder_template`,`homefolder`,`space_quota_max`,`space_quota_current`,`readonly`, `upload`,`download`,`download_folders`,`read_comments`,`write_comments`,`email`,`weblink`,`share`,`share_guests`,`metadata`,`file_history`) VALUES (1,1,1,1,1,1,'',0,'','/user-files',NULL,0,0,1,1,1,1,1,1,1,1,1,1,1);
+INSERT INTO `df_users_permissions` (`uid`,`admin_users`,`admin_roles`,`admin_notifications`,`admin_logs`,`admin_metadata`, `admin_over`,`admin_max_users`,`admin_homefolder_template`,`homefolder`,`space_quota_max`,`space_quota_current`,`readonly`, `upload`,`download`,`download_folders`,`read_comments`,`write_comments`,`email`,`weblink`,`share`,`share_guests`,`metadata`,`file_history`,`users_may_see`) VALUES (1,1,1,1,1,1,'',0,'','/user-files',NULL,0,0,1,1,1,1,1,1,1,1,1,1,1,'-ALL-');
 
 CREATE TABLE IF NOT EXISTS `df_users_sessions` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
