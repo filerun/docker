@@ -62,6 +62,8 @@ CREATE TABLE IF NOT EXISTS `df_modules_folders_notifications` (
   `shareid` int(8) DEFAULT NULL,
   `notify_write` int(1) NOT NULL DEFAULT '0',
   `notify_read` int(1) NOT NULL DEFAULT '0',
+  `notify_social` INT(1) NOT NULL DEFAULT '0',
+  `notify_misc` INT(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `uid` (`uid`,`pathid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -353,7 +355,7 @@ CREATE TABLE IF NOT EXISTS `df_settings` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `df_settings` (`var`, `val`) VALUES
-('currentVersion', '2019.06.01'),
+('currentVersion', '2019.12.25'),
 ('app_title', 'FileRun'),
 ('smtp_enable', '0'),
 ('smtp_host', ''),
@@ -388,7 +390,7 @@ INSERT INTO `df_settings` (`var`, `val`) VALUES
 ('search_default_mode', 'filename'),
 ('search_tika_path', '/path/to/tika-app-1.12.jar'),
 ('thumbnails_enable', '1'),
-('thumbnails_imagemagick', '1'),
+('thumbnails_imagemagick', 'exec'),
 ('thumbnails_imagemagick_path', 'gm'),
 ('thumbnails_size', '170'),
 ('thumbnails_imagemagick_ext', 'psd,psb,eps,tst,plt,ai,pdf,jpg,jpeg,gif,png,jpe,erf,dng,cr2,crw,3fr,fff,ppm,raw,kdc,dcr,nef,mef,mos,nrw,orf,raf,mrw,mdc,rw2,pef,x3f,srw,arw,iiq,svg'),
@@ -445,7 +447,14 @@ INSERT INTO `df_settings` (`var`, `val`) VALUES
 ('disable_custom_action_admin_thumbnail_troubleshooter', '1'),
 ('thumbnails_libreoffice', '0'),
 ('thumbnails_libreoffice_ext', 'doc,docx,ods,xls,xlsx,odt,ppt,pps,pptx,odp,rtf,txt,html,csv,tsv,md'),
-('thumbnails_libreoffice_path', 'soffice');
+('thumbnails_libreoffice_path', 'soffice'),
+('thumbnails_small_filesize_check_res', '1'),
+('ui_preview_size', 'automatic'),
+('ui_preview_filesize_limit_min', '4'),
+('ui_preview_small_filesize_check_res', '1'),
+('weblinks_default_mode', 'grid'),
+('ui_enable_collections', '1'),
+('thumbnails_filesize_limit_min', '8');
 
 CREATE TABLE IF NOT EXISTS `df_users` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -596,9 +605,11 @@ CREATE TABLE IF NOT EXISTS `df_oauth_clients` (
   UNIQUE KEY `cid` (`cid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `df_oauth_clients` (`id`, `enabled`, `cid`, `secret`, `logo_url`, `name`, `publisher`, `description`, `website`, `publisher_website`) VALUES (1, 1, 'FileRun0000000000000000000Mobile', '0000000000000000NoSecret0000000000000000', 'https://filerun.com/images/logo-mobile-app.png', 'FileRun Mobile', 'Afian AB', 'Authentication for the mobile apps', 'https://filerun.com', 'https://afian.se');
+INSERT INTO `df_oauth_clients` (`id`, `enabled`, `cid`, `secret`, `logo_url`, `name`, `publisher`, `description`, `website`, `publisher_website`) VALUES (NULL, 1, 'FileRun0000000000000000000Mobile', '0000000000000000NoSecret0000000000000000', 'https://filerun.com/images/logo-mobile-app.png', 'FileRun Mobile', 'Afian AB', 'Authentication for the mobile apps', 'https://filerun.com', 'https://afian.se');
 
-INSERT INTO `df_oauth_clients` (`id`, `enabled`, `cid`, `secret`, `logo_url`, `name`, `publisher`, `description`, `website`, `publisher_website`) VALUES (2, 1, 'Nextcloud0000000000000000000Apps', '0000000000000000NoSecret0000000000000000', 'https://filerun.com/images/nextcloud-square-logo.png', 'Nextcloud', 'Nextcloud GmbH', 'Authentication for the Nextcloud mobile apps', 'https://nextcloud.com/clients/', 'https://nextcloud.com');
+INSERT INTO `df_oauth_clients` (`id`, `enabled`, `cid`, `secret`, `logo_url`, `name`, `publisher`, `description`, `website`, `publisher_website`) VALUES (NULL, 1, 'Nextcloud0000000000000000000Apps', '0000000000000000NoSecret0000000000000000', 'https://filerun.com/images/nextcloud-square-logo.png', 'Nextcloud', 'Nextcloud GmbH', 'Authentication for the Nextcloud mobile apps', 'https://nextcloud.com/clients/', 'https://nextcloud.com');
+
+INSERT INTO `df_oauth_clients` (`id`, `enabled`, `cid`, `secret`, `logo_url`, `name`, `publisher`, `description`, `website`, `publisher_website`) VALUES (NULL, 1, 'Generic0000000000000000000WebDAV', '0000000000000000NoSecret0000000000000000', '', 'WebDAV', '', 'Authentication for the WebDAV apps', '', '');
 
 CREATE TABLE IF NOT EXISTS `df_oauth_client_redirect_uris` (
   `id` mediumint(8) NOT NULL AUTO_INCREMENT,
@@ -647,7 +658,8 @@ INSERT INTO `df_oauth_scopes` (`scope`, `description`) VALUES
 ('download.sandbox', ''),
 ('share', ''),
 ('share.sandbox', ''),
-('metadata', '');
+('metadata', ''),
+('webdav', '');
 
 CREATE TABLE IF NOT EXISTS `df_oauth_sessions` (
   `id` mediumint(8) NOT NULL AUTO_INCREMENT,
@@ -658,6 +670,7 @@ CREATE TABLE IF NOT EXISTS `df_oauth_sessions` (
   `date_created` DATETIME NULL DEFAULT NULL,
   `client_ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `owner_ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nc_login_token` VARCHAR(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `cid` (`cid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
