@@ -58,9 +58,11 @@ ENV APACHE_RUN_USER user
 ENV APACHE_RUN_USER_ID 1000
 ENV APACHE_RUN_GROUP user
 ENV APACHE_RUN_GROUP_ID 1000
+ENV FR_ADMIN_NAME superuser
 
 COPY db.sql /filerun.setup.sql
 COPY autoconfig.php /
+COPY chinese.php /
 
 VOLUME ["/var/www/html", "/user-files"]
 

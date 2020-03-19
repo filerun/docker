@@ -13,6 +13,7 @@ if [ ! -e /var/www/html/index.php ];  then
 	echo "[FileRun fresh install]"
 	unzip /filerun.zip -d /var/www/html/
 	cp /autoconfig.php /var/www/html/system/data/
+        cp /chinese.php /var/www/html/system/data/translations/
 	chown -R ${APACHE_RUN_USER}:${APACHE_RUN_GROUP} /var/www/html
 	chown ${APACHE_RUN_USER}:${APACHE_RUN_GROUP} /user-files
 	mysql_host="${FR_DB_HOST:-mysql}"
