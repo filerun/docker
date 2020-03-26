@@ -46,11 +46,7 @@ RUN apt-get update \
     && echo "zend_extension=ioncube_loader_lin_7.3.so" >> /usr/local/etc/php/conf.d/00_ioncube_loader_lin_7.3.ini \
     && rm -rf ioncube ioncube_loaders_lin_x86-64.tar.gz \
     && echo Enable Apache XSendfile \
-    && echo "{ \
-        echo 'XSendFile On'; \
-        echo; \
-        echo 'XSendFilePath /user-files'; \
-    }" | tee "/etc/apache2/conf-available/filerun.conf" \
+    && echo "XSendFile On\nXSendFilePath /user-files" | tee "/etc/apache2/conf-available/filerun.conf" \
     && a2enconf filerun \
     && echo Download FileRun installation package \
     && curl -o /filerun.zip -L https://filerun.com/download-latest-php73 \
