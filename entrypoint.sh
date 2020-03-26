@@ -11,9 +11,7 @@ fi
 # Install FileRun on first run
 if [ ! -e /var/www/html/index.php ];  then
 	echo "[FileRun fresh install]"
-	mysql_host="${FR_DB_HOST:-mysql}"
-	mysql_port="${FR_DB_PORT:-3306}"
-	/wait-for-it.sh $mysql_host:$mysql_port -t 120 -- /import-db.sh
+	/wait-for-it.sh $FR_DB_HOST:$FR_DB_PORT -t 120 -- /import-db.sh
 	unzip /filerun.zip -d /var/www/html/
 	cp /autoconfig.php /var/www/html/system/data/
 	chown -R ${APACHE_RUN_USER}:${APACHE_RUN_GROUP} /var/www/html
