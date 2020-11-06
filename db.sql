@@ -1,4 +1,4 @@
--- /* FILERUN: 2019.06.01 */
+-- /* FILERUN: 2019.12.25 */
 
 CREATE TABLE IF NOT EXISTS `df_file_logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
