@@ -1,4 +1,4 @@
--- /* FILERUN: 2018.11.11 */
+-- /* FILERUN: 2019.12.25 */
 
 CREATE TABLE IF NOT EXISTS `df_file_logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -27,7 +27,7 @@ INSERT INTO `df_file_handlers` (`type`, `ext`, `handler`) VALUES
 ('txt', NULL, 'code_editor'),
 ('img', NULL, 'image_viewer'),
 ('wvideo', NULL, 'video_player'),
-('mp3', NULL, 'audio_player'),
+('mp3', NULL, 'open_in_browser'),
 ('office', NULL, 'office_web_viewer'),
 ('ooffice', NULL, 'office_web_viewer'),
 ('arch', NULL, 'arch'),
@@ -42,7 +42,8 @@ INSERT INTO `df_file_handlers` (`type`, `ext`, `handler`) VALUES
 (NULL, 'gpx', 'bing_kml_viewer'),
 (NULL, 'md', 'markdown_viewer'),
 (NULL, 'epub', 'epub_reader'),
-(NULL, 'gpx', 'bing_kml_viewer');
+(NULL, 'gpx', 'bing_kml_viewer'),
+('3d', '', '3d_viewer');
 
 CREATE TABLE IF NOT EXISTS `df_logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -54,7 +55,6 @@ CREATE TABLE IF NOT EXISTS `df_logs` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
 CREATE TABLE IF NOT EXISTS `df_modules_folders_notifications` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
   `uid` int(9) NOT NULL,
@@ -62,10 +62,11 @@ CREATE TABLE IF NOT EXISTS `df_modules_folders_notifications` (
   `shareid` int(8) DEFAULT NULL,
   `notify_write` int(1) NOT NULL DEFAULT '0',
   `notify_read` int(1) NOT NULL DEFAULT '0',
+  `notify_social` INT(1) NOT NULL DEFAULT '0',
+  `notify_misc` INT(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `uid` (`uid`,`pathid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 
 CREATE TABLE IF NOT EXISTS `df_modules_metadata_dt` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -78,14 +79,11 @@ CREATE TABLE IF NOT EXISTS `df_modules_metadata_dt` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
-
 INSERT INTO `df_modules_metadata_dt` (`id`, `owner`, `name`, `description`, `ext`, `file_types`, `system`) VALUES
 (1, 0, 'Documents', 'System type', 'pdf,txt', 'office,ooffice', 1),
 (2, 0, 'Photos', 'System type', 'psb,psd,tiff,tif,bmp', 'img,raw', 1),
 (3, 0, 'Audio', 'System type', '', 'mp3,audio', 1),
 (4, 0, 'Video', 'System type', '', 'wvideo,video', 1);
-
 
 CREATE TABLE IF NOT EXISTS `df_modules_metadata_fields` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -140,8 +138,6 @@ INSERT INTO `df_modules_metadata_fields`
 (6, 'Description', '', '', '', 1, 0, 0,  NULL, 2),
 (0, 'Rating', '', 'stars', '', 1, 0, 1, 'Rating', NULL);
 
-
-
 CREATE TABLE IF NOT EXISTS `df_modules_metadata_fieldsets` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
   `owner` mediumint(9) NOT NULL,
@@ -152,7 +148,6 @@ CREATE TABLE IF NOT EXISTS `df_modules_metadata_fieldsets` (
   `visible` SMALLINT(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 
 INSERT INTO `df_modules_metadata_fieldsets` (`id`, `owner`, `name`, `description`, `generic`, `system`, `visible`) VALUES
 (1, 0, 'Comments (System)', 'Required for the file commenting system', 1, 1, 0),
@@ -187,7 +182,6 @@ CREATE TABLE IF NOT EXISTS `df_modules_metadata_files` (
   INDEX (`type_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
 CREATE TABLE IF NOT EXISTS `df_modules_metadata_values` (
   `id` INT(10) NOT NULL AUTO_INCREMENT,
   `date_added` datetime NOT NULL,
@@ -206,7 +200,6 @@ CREATE TABLE IF NOT EXISTS `df_modules_metadata_values` (
   INDEX (`field_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
 CREATE TABLE IF NOT EXISTS `df_modules_notifications` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
   `owner` mediumint(9) DEFAULT NULL,
@@ -217,8 +210,6 @@ CREATE TABLE IF NOT EXISTS `df_modules_notifications` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
-
 CREATE TABLE IF NOT EXISTS `df_modules_search_index_queue` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
   `uid` mediumint(9) NOT NULL,
@@ -226,7 +217,6 @@ CREATE TABLE IF NOT EXISTS `df_modules_search_index_queue` (
   `action` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 
 CREATE TABLE IF NOT EXISTS `df_modules_shares` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -248,7 +238,6 @@ CREATE TABLE IF NOT EXISTS `df_modules_shares` (
   KEY `uid` (`uid`,`path`(248))
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
 CREATE TABLE IF NOT EXISTS `df_modules_trash` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
   `uid` mediumint(9) NOT NULL,
@@ -257,7 +246,6 @@ CREATE TABLE IF NOT EXISTS `df_modules_trash` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
 CREATE TABLE IF NOT EXISTS `df_modules_user_groups` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -265,7 +253,6 @@ CREATE TABLE IF NOT EXISTS `df_modules_user_groups` (
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 
 CREATE TABLE IF NOT EXISTS `df_modules_user_roles` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -300,7 +287,7 @@ CREATE TABLE IF NOT EXISTS `df_modules_user_roles` (
   `share_guests` smallint(1) NOT NULL DEFAULT '0',
   `metadata` smallint(1) NOT NULL DEFAULT '0',
   `file_history` smallint(1) NOT NULL DEFAULT '0',
-  `users_may_see` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '-ALL-',
+  `users_may_see` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `change_pass` smallint(1) NOT NULL DEFAULT '1',
   `edit_profile` smallint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
@@ -309,12 +296,12 @@ CREATE TABLE IF NOT EXISTS `df_modules_user_roles` (
 INSERT INTO `df_modules_user_roles` (`id`, `system`, `owner`, `name`, `description`, `admin_type`, `admin_users`, `admin_roles`, `admin_notifications`, `admin_logs`, `admin_metadata`, `admin_over`, `admin_max_users`, `admin_homefolder_template`, `homefolder`, `create_folder`, `space_quota_max`, `space_quota_current`, `readonly`, `upload`, `upload_max_size`, `download`, `download_folders`, `read_comments`, `write_comments`, `email`, `weblink`, `share`, `metadata`, `file_history`, `users_may_see`, `change_pass`, `edit_profile`) VALUES
 (NULL, 1, NULL, 'Guest', 'Automatically deleted when there are no files shared with.', '', 0, 0, 0, 0, 0, '', 0, '', '', 0, NULL, 0, 1, 0, NULL, 1, 0, 0, 0, 0, 0, 0, 0, 0, '-ALL-', 0, 0);
 
-
 CREATE TABLE IF NOT EXISTS `df_modules_weblinks` (
   `id` INT(10) NOT NULL AUTO_INCREMENT,
   `id_rnd` VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
   `uid` mediumint(9) NOT NULL,
-  `pathid` INT(10) NOT NULL,
+  `pathid` INT(10) NULL DEFAULT NULL,
+  `cid` INT(11) NULL DEFAULT NULL,
   `share_id` mediumint(9) NULL DEFAULT NULL,
   `short_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `password` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -336,7 +323,6 @@ CREATE TABLE IF NOT EXISTS `df_modules_weblinks` (
   KEY `uid` (`uid`,`pathid`),
   INDEX (`expiry`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 
 CREATE TABLE IF NOT EXISTS `df_notifications_logs` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -360,17 +346,16 @@ CREATE TABLE IF NOT EXISTS `df_paths` (
   INDEX `path` (`path`(250))
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
 CREATE TABLE IF NOT EXISTS `df_settings` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
-  `var` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `var` VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `val` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`),
   UNIQUE KEY `var` (`var`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `df_settings` (`var`, `val`) VALUES
-('currentVersion', '2018.11.11'),
+('currentVersion', '2019.12.25'),
 ('app_title', 'FileRun'),
 ('smtp_enable', '0'),
 ('smtp_host', ''),
@@ -405,9 +390,9 @@ INSERT INTO `df_settings` (`var`, `val`) VALUES
 ('search_default_mode', 'filename'),
 ('search_tika_path', '/path/to/tika-app-1.12.jar'),
 ('thumbnails_enable', '1'),
-('thumbnails_imagemagick', '1'),
+('thumbnails_imagemagick', 'exec'),
 ('thumbnails_imagemagick_path', 'gm'),
-('thumbnails_size', '140'),
+('thumbnails_size', '170'),
 ('thumbnails_imagemagick_ext', 'psd,psb,eps,tst,plt,ai,pdf,jpg,jpeg,gif,png,jpe,erf,dng,cr2,crw,3fr,fff,ppm,raw,kdc,dcr,nef,mef,mos,nrw,orf,raf,mrw,mdc,rw2,pef,x3f,srw,arw,iiq,svg'),
 ('thumbnails_ffmpeg', '1'),
 ('thumbnails_ffmpeg_path', 'ffmpeg'),
@@ -457,9 +442,19 @@ INSERT INTO `df_settings` (`var`, `val`) VALUES
 ('ui_enable_rating', '1'),
 ('ui_photos_thumbnail_size', '200'),
 ('ui_theme', 'blue'),
-('download_accelerator', 'xsendfile'),
 ('search_result_limit', '200'),
-('search_mode', 'broad');
+('search_mode', 'broad'),
+('disable_custom_action_admin_thumbnail_troubleshooter', '1'),
+('thumbnails_libreoffice', '0'),
+('thumbnails_libreoffice_ext', 'doc,docx,ods,xls,xlsx,odt,ppt,pps,pptx,odp,rtf,txt,html,csv,tsv,md'),
+('thumbnails_libreoffice_path', 'soffice'),
+('thumbnails_small_filesize_check_res', '1'),
+('ui_preview_size', 'automatic'),
+('ui_preview_filesize_limit_min', '4'),
+('ui_preview_small_filesize_check_res', '1'),
+('weblinks_default_mode', 'grid'),
+('ui_enable_collections', '1'),
+('thumbnails_filesize_limit_min', '8');
 
 CREATE TABLE IF NOT EXISTS `df_users` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -496,7 +491,6 @@ CREATE TABLE IF NOT EXISTS `df_users` (
   INDEX (`expiration_date`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
 INSERT INTO `df_users` SET 
 `id` = 1,
 `username` = 'superuser',
@@ -505,7 +499,6 @@ INSERT INTO `df_users` SET
 `registration_date` = NOW(),
 `activated` = 1,
 `name` = 'Superuser';
-
 
 CREATE TABLE IF NOT EXISTS `df_users_permissions` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -537,15 +530,14 @@ CREATE TABLE IF NOT EXISTS `df_users_permissions` (
   `share_guests` smallint(1) NOT NULL DEFAULT '0',
   `metadata` smallint(1) NOT NULL DEFAULT '0',
   `file_history` smallint(1) NOT NULL DEFAULT '0',
-  `users_may_see` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '-ALL-',
+  `users_may_see` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `change_pass` smallint(1) NOT NULL DEFAULT '1',
   `edit_profile` smallint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE (`uid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `df_users_permissions` (`uid`,`admin_users`,`admin_roles`,`admin_notifications`,`admin_logs`,`admin_metadata`, `admin_over`,`admin_max_users`,`admin_homefolder_template`,`homefolder`,`space_quota_max`,`space_quota_current`,`readonly`, `upload`,`download`,`download_folders`,`read_comments`,`write_comments`,`email`,`weblink`,`share`,`share_guests`,`metadata`,`file_history`) VALUES (1,1,1,1,1,1,'',0,'','/user-files',NULL,0,0,1,1,1,1,1,1,1,1,1,1,1);
-
+INSERT INTO `df_users_permissions` (`uid`,`admin_users`,`admin_roles`,`admin_notifications`,`admin_logs`,`admin_metadata`, `admin_over`,`admin_max_users`,`admin_homefolder_template`,`homefolder`,`space_quota_max`,`space_quota_current`,`readonly`, `upload`,`download`,`download_folders`,`read_comments`,`write_comments`,`email`,`weblink`,`share`,`share_guests`,`metadata`,`file_history`,`users_may_see`) VALUES (1,1,1,1,1,1,'',0,'','/user-files',NULL,0,0,1,1,1,1,1,1,1,1,1,1,1,'-ALL-');
 
 CREATE TABLE IF NOT EXISTS `df_users_sessions` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -558,8 +550,6 @@ CREATE TABLE IF NOT EXISTS `df_users_sessions` (
   PRIMARY KEY (`id`),
   UNIQUE (`token`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
 
 CREATE TABLE IF NOT EXISTS `df_oauth_access_tokens` (
   `id` mediumint(8) NOT NULL AUTO_INCREMENT,
@@ -615,7 +605,11 @@ CREATE TABLE IF NOT EXISTS `df_oauth_clients` (
   UNIQUE KEY `cid` (`cid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `df_oauth_clients` (`id`, `enabled`, `cid`, `secret`, `logo_url`, `name`, `publisher`, `description`, `website`, `publisher_website`) VALUES (1, 1, 'FileRun0000000000000000000Mobile', '0000000000000000NoSecret0000000000000000', 'https://www.filerun.com/images/logo-mobile-app.png', 'FileRun Mobile', 'Afian AB', 'Authentication for the mobile apps', 'http://www.filerun.com', 'http://www.afian.se');
+INSERT INTO `df_oauth_clients` (`id`, `enabled`, `cid`, `secret`, `logo_url`, `name`, `publisher`, `description`, `website`, `publisher_website`) VALUES (NULL, 1, 'FileRun0000000000000000000Mobile', '0000000000000000NoSecret0000000000000000', 'https://filerun.com/images/logo-mobile-app.png', 'FileRun Mobile', 'Afian AB', 'Authentication for the mobile apps', 'https://filerun.com', 'https://afian.se');
+
+INSERT INTO `df_oauth_clients` (`id`, `enabled`, `cid`, `secret`, `logo_url`, `name`, `publisher`, `description`, `website`, `publisher_website`) VALUES (NULL, 1, 'Nextcloud0000000000000000000Apps', '0000000000000000NoSecret0000000000000000', 'https://filerun.com/images/nextcloud-square-logo.png', 'Nextcloud', 'Nextcloud GmbH', 'Authentication for the Nextcloud mobile apps', 'https://nextcloud.com/clients/', 'https://nextcloud.com');
+
+INSERT INTO `df_oauth_clients` (`id`, `enabled`, `cid`, `secret`, `logo_url`, `name`, `publisher`, `description`, `website`, `publisher_website`) VALUES (NULL, 1, 'Generic0000000000000000000WebDAV', '0000000000000000NoSecret0000000000000000', '', 'WebDAV', '', 'Authentication for the WebDAV apps', '', '');
 
 CREATE TABLE IF NOT EXISTS `df_oauth_client_redirect_uris` (
   `id` mediumint(8) NOT NULL AUTO_INCREMENT,
@@ -626,6 +620,8 @@ CREATE TABLE IF NOT EXISTS `df_oauth_client_redirect_uris` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `df_oauth_client_redirect_uris` (`id`, `cid`, `uri`) VALUES (1, 1, 'filerun://');
+
+INSERT INTO `df_oauth_client_redirect_uris` (`id`, `cid`, `uri`) VALUES (2, 2, 'nc://');
 
 CREATE TABLE IF NOT EXISTS `df_oauth_refresh_tokens` (
   `id` mediumint(8) NOT NULL AUTO_INCREMENT,
@@ -662,7 +658,8 @@ INSERT INTO `df_oauth_scopes` (`scope`, `description`) VALUES
 ('download.sandbox', ''),
 ('share', ''),
 ('share.sandbox', ''),
-('metadata', '');
+('metadata', ''),
+('webdav', '');
 
 CREATE TABLE IF NOT EXISTS `df_oauth_sessions` (
   `id` mediumint(8) NOT NULL AUTO_INCREMENT,
@@ -673,6 +670,7 @@ CREATE TABLE IF NOT EXISTS `df_oauth_sessions` (
   `date_created` DATETIME NULL DEFAULT NULL,
   `client_ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `owner_ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nc_login_token` VARCHAR(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `cid` (`cid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -707,3 +705,24 @@ ALTER TABLE `df_oauth_sessions` ADD CONSTRAINT `df_oauth_sessions_ibfk_1` FOREIG
 ALTER TABLE `df_oauth_session_scopes`
   ADD CONSTRAINT `df_oauth_session_scopes_ibfk_1` FOREIGN KEY (`scope`) REFERENCES `df_oauth_scopes` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `df_oauth_session_scopes_ibfk_2` FOREIGN KEY (`sid`) REFERENCES `df_oauth_sessions` (`id`) ON DELETE CASCADE;
+
+CREATE TABLE `df_collections` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `uid` mediumint(9) NOT NULL,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `df_collections_items` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cid` int(11) NOT NULL,
+  `pid` int(11) NOT NULL,
+  `share_id` int(9) DEFAULT NULL,
+  `added` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `uid` mediumint(9) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `parent_pid` (`cid`),
+  KEY `pid` (`pid`),
+  KEY `cid` (`cid`,`uid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
