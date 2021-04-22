@@ -1,4 +1,4 @@
--- /* FILERUN: 2020.11.21 */
+-- /* FILERUN: 2021.03.26 */
 
 CREATE TABLE IF NOT EXISTS `df_file_logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -19,31 +19,39 @@ CREATE TABLE IF NOT EXISTS `df_file_handlers` (
   `uid` mediumint(9) DEFAULT NULL,
   `type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ext` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `handler` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `handler` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `handler_edit` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `weblink_handler` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
+  `weblink_edit_handler` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `df_file_handlers` (`type`, `ext`, `handler`) VALUES
-('txt', NULL, 'code_editor'),
-('img', NULL, 'image_viewer'),
-('wvideo', NULL, 'video_player'),
-('mp3', NULL, 'open_in_browser'),
-('office', NULL, 'office_web_viewer'),
-('ooffice', NULL, 'office_web_viewer'),
-('arch', NULL, 'arch'),
-(NULL, 'odt', 'webodf'),
-(NULL, 'ods', 'webodf'),
-(NULL, 'odp', 'webodf'),
-(NULL, 'pdf', 'open_in_browser'),
-(NULL, 'url', 'handle_url'),
-(NULL, 'html', 'html_editor'),
-(NULL, 'kml', 'kml_viewer'),
-(NULL, 'kmz', 'kml_viewer'),
-(NULL, 'gpx', 'bing_kml_viewer'),
-(NULL, 'md', 'markdown_viewer'),
-(NULL, 'epub', 'epub_reader'),
-(NULL, 'gpx', 'bing_kml_viewer'),
-('3d', '', '3d_viewer');
+INSERT INTO `df_file_handlers`
+(`type`, `ext`, `handler`, `handler_edit`, `weblink_handler`, `weblink_edit_handler`) VALUES
+('txt', NULL, 'plain_text_viewer', 'code_editor', 'plain_text_viewer', 'code_editor'),
+('code', NULL, 'code_editor', 'code_editor', 'code_editor', 'code_editor'),
+('img', NULL, 'image_viewer', 'image_editor', 'image_viewer', 'image_editor'),
+('img2', NULL, 'image_viewer', 'image_editor', 'image_viewer', 'image_editor'),
+('raw', NULL, 'image_viewer', 'image_editor', 'image_viewer', NULL),
+('wvideo', NULL, 'video_player', NULL, 'video_player', NULL),
+('mp3', NULL, 'audio_player', NULL, 'audio_player', NULL),
+('office', NULL, 'office_web_viewer', NULL, 'libreoffice_viewer', NULL),
+('ooffice', NULL, 'office_web_viewer', NULL, 'libreoffice_viewer', NULL),
+('arch', NULL, 'arch', NULL, NULL, NULL),
+('3d', NULL, '3d_viewer', NULL, '3d_viewer', NULL),
+('cad', NULL, 'autodesk', NULL, 'autodesk', NULL),
+(NULL, 'odt', 'webodf', NULL, 'webodf', NULL),
+(NULL, 'ods', 'webodf', NULL, 'webodf', NULL),
+(NULL, 'odp', 'webodf', NULL, 'webodf', NULL),
+(NULL, 'pdf', 'open_in_browser', NULL, 'open_in_browser', NULL),
+(NULL, 'url', 'handle_url', NULL, 'handle_url', NULL),
+(NULL, 'html', 'html_editor', 'html_editor', 'html_editor', 'html_editor'),
+(NULL, 'kml', 'kml_viewer', NULL, 'kml_viewer', NULL),
+(NULL, 'kmz', 'kml_viewer', NULL, 'kml_viewer', NULL),
+(NULL, 'gpx', 'bing_kml_viewer', NULL, 'bing_kml_viewer', NULL),
+(NULL, 'md', 'markdown_viewer', 'code_editor', 'markdown_viewer', 'code_editor'),
+(NULL, 'epub', 'epub_reader', NULL, 'epub_reader', NULL),
+(NULL, 'csv', 'csv_editor', 'csv_editor', 'csv_editor', 'csv_editor');
 
 CREATE TABLE IF NOT EXISTS `df_logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -52,7 +60,8 @@ CREATE TABLE IF NOT EXISTS `df_logs` (
   `data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `uid` mediumint(9) NOT NULL DEFAULT '0',
   `path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX(`date`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `df_modules_folders_notifications` (
@@ -91,6 +100,7 @@ CREATE TABLE IF NOT EXISTS `df_modules_metadata_fields` (
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `autocomplete` SMALLINT(1) NULL DEFAULT NULL,
   `options` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `hide_fieldset_name_in_column` smallint(1) NOT NULL DEFAULT '0',
   `hide_field_via_weblinks` SMALLINT(1) NOT NULL DEFAULT '0',
@@ -137,7 +147,11 @@ INSERT INTO `df_modules_metadata_fields`
 
 (6, 'Author', '', '', '', 1, 0, 0, NULL, 1),
 (6, 'Description', '', '', '', 1, 0, 0,  NULL, 2),
-(0, 'Rating', '', 'stars', '', 1, 0, 1, 'Rating', NULL);
+(0, 'Rating', '', 'stars', '', 1, 0, 1, 'Rating', NULL),
+(0, 'autodesk_urn', 'Autodesk Viewer (System)', '', '', 0, 0, 1, NULL, NULL),
+(4, 'Date taken', '', 'date', '', 1, 0, 0, 'info->quicktime->moov->subatoms->0->creation_time_unix', 1),
+(4, 'GPS latitude', '', 'small', '', 1, 0, 0, 'info->tags->quicktime->gps_latitude', 6),
+(4, 'GPS longitude', '', 'small', '', 1, 0, 0, 'info->tags->quicktime->gps_longitude', 7);
 
 CREATE TABLE IF NOT EXISTS `df_modules_metadata_fieldsets` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -279,6 +293,7 @@ CREATE TABLE IF NOT EXISTS `df_modules_user_roles` (
   `upload_max_size` BIGINT( 20 ) NULL DEFAULT NULL,
   `upload_limit_types` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `download` smallint(1) DEFAULT NULL,
+  `preview` SMALLINT(1) NULL DEFAULT '1',
   `download_folders` smallint(1) DEFAULT NULL,
   `read_comments` smallint(1) DEFAULT NULL,
   `write_comments` smallint(1) DEFAULT NULL,
@@ -294,8 +309,9 @@ CREATE TABLE IF NOT EXISTS `df_modules_user_roles` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `df_modules_user_roles` (`id`, `system`, `owner`, `name`, `description`, `admin_type`, `admin_users`, `admin_roles`, `admin_notifications`, `admin_logs`, `admin_metadata`, `admin_over`, `admin_max_users`, `admin_homefolder_template`, `homefolder`, `create_folder`, `space_quota_max`, `space_quota_current`, `readonly`, `upload`, `upload_max_size`, `download`, `download_folders`, `read_comments`, `write_comments`, `email`, `weblink`, `share`, `metadata`, `file_history`, `users_may_see`, `change_pass`, `edit_profile`) VALUES
-(NULL, 1, NULL, 'Guest', 'Automatically deleted when there are no files shared with.', '', 0, 0, 0, 0, 0, '', 0, '', '', 0, NULL, 0, 1, 0, NULL, 1, 0, 0, 0, 0, 0, 0, 0, 0, '-ALL-', 0, 0);
+
+INSERT INTO `df_modules_user_roles` (`id`, `system`, `owner`, `name`, `description`, `admin_type`, `admin_users`, `admin_roles`, `admin_notifications`, `admin_logs`, `admin_metadata`, `admin_over`, `admin_max_users`, `admin_homefolder_template`, `homefolder`, `create_folder`, `space_quota_max`, `space_quota_current`, `readonly`, `upload`, `upload_max_size`, `download`, `preview`, `download_folders`, `read_comments`, `write_comments`, `email`, `weblink`, `share`, `metadata`, `file_history`, `users_may_see`, `change_pass`, `edit_profile`) VALUES
+(NULL, 1, NULL, 'Guest', 'Automatically deleted when there are no files shared with.', '', 0, 0, 0, 0, 0, '', 0, '', '', 0, NULL, 0, 1, 0, NULL, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, '-ALL-', 0, 0);
 
 CREATE TABLE IF NOT EXISTS `df_modules_weblinks` (
   `id` INT(10) NOT NULL AUTO_INCREMENT,
@@ -312,7 +328,7 @@ CREATE TABLE IF NOT EXISTS `df_modules_weblinks` (
   `download_limit` mediumint(6) DEFAULT NULL,
   `allow_uploads` int(1) NOT NULL DEFAULT '0',
   `allow_downloads` int(1) NOT NULL DEFAULT  '1',
-  `force_save` tinyint(1) DEFAULT '0',
+  `allow_editing` INT(1) NOT NULL DEFAULT '0',
   `system` smallint(1) NOT NULL DEFAULT '0',
   `notify` mediumint(1) NOT NULL DEFAULT '0',
   `download_terms` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
@@ -357,7 +373,7 @@ CREATE TABLE IF NOT EXISTS `df_settings` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `df_settings` (`var`, `val`) VALUES
-('currentVersion', '2020.11.21'),
+('currentVersion', '2021.03.26'),
 ('app_title', 'FileRun'),
 ('smtp_enable', '0'),
 ('smtp_host', ''),
@@ -393,9 +409,11 @@ INSERT INTO `df_settings` (`var`, `val`) VALUES
 ('search_tika_path', '/path/to/tika-app-1.12.jar'),
 ('thumbnails_enable', '1'),
 ('thumbnails_imagemagick', 'exec'),
-('thumbnails_imagemagick_path', 'gm'),
+('thumbnails_imagemagick_path', 'convert'),
 ('thumbnails_size', '170'),
-('thumbnails_imagemagick_ext', 'psd,psb,eps,tst,plt,ai,pdf,jpg,jpeg,gif,png,jpe,erf,dng,cr2,crw,3fr,fff,ppm,raw,kdc,dcr,nef,mef,mos,nrw,orf,raf,mrw,mdc,rw2,pef,x3f,srw,arw,iiq,svg,tif,tiff'),
+('thumbnails_stl', '1'),
+('thumbnails_stl_path', 'stl-thumb'),
+('thumbnails_imagemagick_ext', 'psd,psb,eps,tst,plt,ai,pdf,jpg,jpeg,gif,png,jpe,erf,dng,cr2,cr3,crw,3fr,fff,ppm,raw,kdc,dcr,nef,mef,mos,nrw,orf,raf,mrw,mdc,rw2,pef,x3f,srw,arw,iiq,svg,tif,tiff,heic,webp,exr'),
 ('thumbnails_ffmpeg', '1'),
 ('thumbnails_ffmpeg_path', 'ffmpeg'),
 ('thumbnails_ffmpeg_ext', 'mpg,mpeg,mp4,mov,avi,divx,mkv,wmv,rm,flv,asx,asf,swf,3gp,3g2,m4v,m2ts,mts,m2v,ogv,webm'),
@@ -452,14 +470,15 @@ INSERT INTO `df_settings` (`var`, `val`) VALUES
 ('disable_custom_action_admin_thumbnail_troubleshooter', '1'),
 ('thumbnails_libreoffice', '0'),
 ('thumbnails_libreoffice_ext', 'doc,docx,ods,xls,xlsx,odt,ppt,pps,pptx,odp,rtf,txt,html,csv,tsv,md'),
-('thumbnails_libreoffice_path', 'soffice'),
+('thumbnails_libreoffice_path', 'export HOME=/tmp && /opt/libreoffice6.4/program/soffice'),
 ('thumbnails_small_filesize_check_res', '1'),
 ('ui_preview_size', 'automatic'),
 ('ui_preview_filesize_limit_min', '4'),
 ('ui_preview_small_filesize_check_res', '1'),
 ('weblinks_default_mode', 'grid'),
 ('ui_enable_collections', '1'),
-('thumbnails_filesize_limit_min', '8');
+('thumbnails_filesize_limit_min', '8'),
+('download_accelerator', 'xsendfile');
 
 CREATE TABLE IF NOT EXISTS `df_users` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -526,6 +545,7 @@ CREATE TABLE IF NOT EXISTS `df_users_permissions` (
   `upload_max_size` BIGINT(20) NULL DEFAULT NULL,
   `upload_limit_types` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `download` smallint(1) DEFAULT NULL,
+  `preview` SMALLINT(1) NULL DEFAULT '1',
   `download_folders` smallint(1) DEFAULT NULL,
   `read_comments` smallint(1) DEFAULT NULL,
   `write_comments` smallint(1) DEFAULT NULL,
@@ -542,7 +562,7 @@ CREATE TABLE IF NOT EXISTS `df_users_permissions` (
   UNIQUE (`uid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `df_users_permissions` (`uid`,`admin_users`,`admin_roles`,`admin_notifications`,`admin_logs`,`admin_metadata`, `admin_over`,`admin_max_users`,`admin_homefolder_template`,`homefolder`,`space_quota_max`,`space_quota_current`,`readonly`, `upload`,`download`,`download_folders`,`read_comments`,`write_comments`,`email`,`weblink`,`share`,`share_guests`,`metadata`,`file_history`,`users_may_see`) VALUES (1,1,1,1,1,1,'',0,'','/user-files',NULL,0,0,1,1,1,1,1,1,1,1,1,1,1,'-ALL-');
+INSERT INTO `df_users_permissions` (`uid`,`admin_users`,`admin_roles`,`admin_notifications`,`admin_logs`,`admin_metadata`, `admin_over`,`admin_max_users`,`admin_homefolder_template`,`homefolder`,`space_quota_max`,`space_quota_current`,`readonly`, `upload`,`download`, `preview`, `download_folders`,`read_comments`,`write_comments`,`email`,`weblink`,`share`,`share_guests`,`metadata`,`file_history`,`users_may_see`) VALUES (1,1,1,1,1,1,'',0,'','/user-files',NULL,0,0,1,1,1,1,1,1,1,1,1,1,1,1,'-ALL-');
 
 CREATE TABLE IF NOT EXISTS `df_users_sessions` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,

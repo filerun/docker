@@ -1,4 +1,3 @@
-2020.11.22
------------
-- Updated FileRun to 2020.11.21
-- Improved database handling
+Upgraded PHP to version 7.4
+Upgraded FileRun to version 2021.03.26
+Added "stl-thumb" and "cron"
