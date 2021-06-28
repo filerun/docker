@@ -1,4 +1,4 @@
--- /* FILERUN: 2021.03.26 */
+-- /* FILERUN: 2021.06.27 */
 
 CREATE TABLE IF NOT EXISTS `df_file_logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -45,7 +45,7 @@ INSERT INTO `df_file_handlers`
 (NULL, 'odp', 'webodf', NULL, 'webodf', NULL),
 (NULL, 'pdf', 'open_in_browser', NULL, 'open_in_browser', NULL),
 (NULL, 'url', 'handle_url', NULL, 'handle_url', NULL),
-(NULL, 'html', 'html_editor', 'html_editor', 'html_editor', 'html_editor'),
+(NULL, 'html', 'code_editor', 'code_editor', 'code_editor', 'code_editor'),
 (NULL, 'kml', 'kml_viewer', NULL, 'kml_viewer', NULL),
 (NULL, 'kmz', 'kml_viewer', NULL, 'kml_viewer', NULL),
 (NULL, 'gpx', 'bing_kml_viewer', NULL, 'bing_kml_viewer', NULL),
@@ -373,7 +373,7 @@ CREATE TABLE IF NOT EXISTS `df_settings` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `df_settings` (`var`, `val`) VALUES
-('currentVersion', '2021.03.26'),
+('currentVersion', '2021.06.27'),
 ('app_title', 'FileRun'),
 ('smtp_enable', '0'),
 ('smtp_host', ''),
@@ -478,7 +478,10 @@ INSERT INTO `df_settings` (`var`, `val`) VALUES
 ('weblinks_default_mode', 'grid'),
 ('ui_enable_collections', '1'),
 ('thumbnails_filesize_limit_min', '8'),
-('download_accelerator', 'xsendfile');
+('download_accelerator', 'xsendfile'),
+ ('plugins_html_editor_use_purifier', '1'),
+('custom_action_html_editor_hide_create_new', '0'),
+('disable_custom_action_html_editor', '1');
 
 CREATE TABLE IF NOT EXISTS `df_users` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,

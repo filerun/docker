@@ -64,7 +64,7 @@ RUN apt-get clean \
     && a2enconf filerun \
 # Download FileRun installation package
     && echo [Download FileRun installation package version 2021.03.26] \
-    && curl -o /filerun.zip -L 'https://f.afian.se/wl/?id=SkPwYC8dOcMIDWohmyjOqAgdqhRqCZ3X&fmode=download' \
+    && curl -o /filerun.zip -L 'https://f.afian.se/wl/?id=iwmi3ydsxr2Ocq1Lo6atTsIfQA70gDov&fmode=download&recipient=ZmlsZXJ1bi5jb20%3D' \
     && chown www-data:www-data /user-files \
     && chmod +x /wait-for-it.sh /import-db.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
