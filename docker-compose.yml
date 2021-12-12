@@ -11,8 +11,9 @@ services:
     volumes:
       - /filerun/db:/var/lib/mysql
 
-  web:
-    image: afian/filerun
+  filerun:
+    image: filerun/filerun
+    container_name: filerun
     environment:
       FR_DB_HOST: db
       FR_DB_PORT: 3306

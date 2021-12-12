@@ -1,4 +1,4 @@
--- /* FILERUN: 2021.06.27 */
+-- /* FILERUN: 2021.12.07 */
 
 CREATE TABLE IF NOT EXISTS `df_file_logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -35,8 +35,8 @@ INSERT INTO `df_file_handlers`
 ('raw', NULL, 'image_viewer', 'image_editor', 'image_viewer', NULL),
 ('wvideo', NULL, 'video_player', NULL, 'video_player', NULL),
 ('mp3', NULL, 'audio_player', NULL, 'audio_player', NULL),
-('office', NULL, 'office_web_viewer', NULL, 'libreoffice_viewer', NULL),
-('ooffice', NULL, 'office_web_viewer', NULL, 'libreoffice_viewer', NULL),
+('office', NULL, 'libreoffice_viewer', NULL, 'libreoffice_viewer', NULL),
+('ooffice', NULL, 'libreoffice_viewer', NULL, 'libreoffice_viewer', NULL),
 ('arch', NULL, 'arch', NULL, NULL, NULL),
 ('3d', NULL, '3d_viewer', NULL, '3d_viewer', NULL),
 ('cad', NULL, 'autodesk', NULL, 'autodesk', NULL),
@@ -123,7 +123,8 @@ INSERT INTO `df_modules_metadata_fields`
 (0, 'star', 'Stars (System)', '', '', 0, 0, 1, NULL, NULL),
 (0, 'filename', 'Search (System)', '', '', 0, 0, 1, NULL, NULL),
 (0, 'zoho_collab', 'Zoho Collaborative Editing (System)', '', '', 0, 0, 1, NULL, NULL),
-(0, 'Tags', '', 'multiple', '', 0, 0, 1, 'MWG->Keywords', NULL),
+(0, 'autodesk_urn', 'Autodesk Viewer (System)', '', '', 0, 0, 1, NULL, NULL),
+(0, 'Tags', '', 'multiple', '', 0, 0, 1, 'Tags', NULL),
 
 (3, 'Width', '', 'small', '', 1, 0, 0, 'MWG->width', 1),
 (3, 'Height', '', 'small', '', 1, 0, 0, 'MWG->height', 2),
@@ -134,24 +135,24 @@ INSERT INTO `df_modules_metadata_fields`
 (3, 'GPS latitude', '', 'small', '', 1, 0, 0, 'MWG->GPSlatitude', 7),
 (3, 'GPS longitude', '', 'small', '', 1, 0, 0, 'MWG->GPSlongitude', 8),
 
-(4, 'Movie title', '', '', '', 1, 0, 0, 'info->quicktime->moov->subatoms->3->subatoms->0->subatoms->1->subatoms->0->data', 1),
-(4, 'Width', '', 'small', '', 1, 0, 0, 'info->video->resolution_x', 2),
-(4, 'Height', '', 'small', '', 1, 0, 0, 'info->video->resolution_y', 3),
-(4, 'Codec', '', '', '', 1, 0, 0, 'info->video->dataformat', 4),
+(4, 'Date taken', '', 'date', '', 1, 0, 0, 'video->DateCreated', 1),
+(4, 'Movie title', '', '', '', 1, 0, 0, 'video->title', 2),
+(4, 'Width', '', 'small', '', 1, 0, 0, 'video->width', 3),
+(4, 'Height', '', 'small', '', 1, 0, 0, 'video->height', 4),
+(4, 'Codec', '', '', '', 1, 0, 0, 'video->codec', 5),
+(4, 'GPS latitude', '', 'small', '', 1, 0, 0, 'video->GPSLatitude', 6),
+(4, 'GPS longitude', '', 'small', '', 1, 0, 0, 'video->GPSLongitude', 7),
 
-(5, 'Artist', '', '', '', 1, 0, 0, 'info->comments->artist', 1),
-(5, 'Title', '', '', '', 1, 0, 0, 'info->comments->title', 2),
-(5, 'Album', '', '', '', 1, 0, 0, 'info->comments->album', 3),
-(5, 'Duration', '', 'small', '', 1, 0, 0, 'info->playtime_string', 4),
-(5, 'Codec', '', '', '', 1, 0, 0, 'info->audio->codec', 5),
+(5, 'Artist', '', '', '', 1, 0, 0, 'audio->artist', 1),
+(5, 'Title', '', '', '', 1, 0, 0, 'audio->title', 2),
+(5, 'Album', '', '', '', 1, 0, 0, 'audio->album', 3),
+(5, 'Duration', '', 'small', '', 1, 0, 0, 'audio->playtime', 4),
+(5, 'Codec', '', '', '', 1, 0, 0, 'audio->codec', 5),
 
 (6, 'Author', '', '', '', 1, 0, 0, NULL, 1),
 (6, 'Description', '', '', '', 1, 0, 0,  NULL, 2),
-(0, 'Rating', '', 'stars', '', 1, 0, 1, 'Rating', NULL),
-(0, 'autodesk_urn', 'Autodesk Viewer (System)', '', '', 0, 0, 1, NULL, NULL),
-(4, 'Date taken', '', 'date', '', 1, 0, 0, 'info->quicktime->moov->subatoms->0->creation_time_unix', 1),
-(4, 'GPS latitude', '', 'small', '', 1, 0, 0, 'info->tags->quicktime->gps_latitude', 6),
-(4, 'GPS longitude', '', 'small', '', 1, 0, 0, 'info->tags->quicktime->gps_longitude', 7);
+(0, 'Rating', '', 'stars', '', 1, 0, 1, 'Rating', NULL);
+
 
 CREATE TABLE IF NOT EXISTS `df_modules_metadata_fieldsets` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -293,7 +294,7 @@ CREATE TABLE IF NOT EXISTS `df_modules_user_roles` (
   `upload_max_size` BIGINT( 20 ) NULL DEFAULT NULL,
   `upload_limit_types` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `download` smallint(1) DEFAULT NULL,
-  `preview` SMALLINT(1) NULL DEFAULT '1',
+  `preview` smallint(1) NULL DEFAULT '1',
   `download_folders` smallint(1) DEFAULT NULL,
   `read_comments` smallint(1) DEFAULT NULL,
   `write_comments` smallint(1) DEFAULT NULL,
@@ -327,8 +328,8 @@ CREATE TABLE IF NOT EXISTS `df_modules_weblinks` (
   `expiry` datetime DEFAULT NULL,
   `download_limit` mediumint(6) DEFAULT NULL,
   `allow_uploads` int(1) NOT NULL DEFAULT '0',
+  `allow_editing` int(1) NOT NULL DEFAULT '0',
   `allow_downloads` int(1) NOT NULL DEFAULT  '1',
-  `allow_editing` INT(1) NOT NULL DEFAULT '0',
   `system` smallint(1) NOT NULL DEFAULT '0',
   `notify` mediumint(1) NOT NULL DEFAULT '0',
   `download_terms` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
@@ -373,7 +374,7 @@ CREATE TABLE IF NOT EXISTS `df_settings` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `df_settings` (`var`, `val`) VALUES
-('currentVersion', '2021.06.27'),
+('currentVersion', '2021.12.07'),
 ('app_title', 'FileRun'),
 ('smtp_enable', '0'),
 ('smtp_host', ''),
@@ -395,6 +396,7 @@ INSERT INTO `df_settings` (`var`, `val`) VALUES
 ('user_registration_reqfields_description', '0'),
 ('user_registration_default_groups', 'a:0:{}'),
 ('user_registration_default_role', ''),
+('auth_plugin_default_role', ''),
 ('user_registration_change_pass', '1'),
 ('captcha', '0'),
 ('allow_change_pass', '1'),
@@ -406,29 +408,48 @@ INSERT INTO `df_settings` (`var`, `val`) VALUES
 ('search_enable', '0'),
 ('search_elastic_host_url', 'http://localhost:9200'),
 ('search_default_mode', 'filename'),
-('search_tika_path', '/path/to/tika-app-1.12.jar'),
-('thumbnails_enable', '1'),
-('thumbnails_imagemagick', 'exec'),
-('thumbnails_imagemagick_path', 'convert'),
-('thumbnails_size', '170'),
-('thumbnails_stl', '1'),
-('thumbnails_stl_path', 'stl-thumb'),
+('search_tika_path', '/path/to/tika-app-1.22.jar'),
+('search_tika_port', '9998'),
+('search_include_img', '0'),
+('search_tika_server_ocr_pdf', '0'),
+('thumbnails_vips', '1'),
+('thumbnails_vips_mode', 'exec'),
+('thumbnails_vips_path', 'vipsthumbnail'),
+('thumbnails_vips_ext', 'jpg,jpeg,tif,tiff,png,webp,pdf,hdr,gif,exr,svg,heic'),
+('thumbnails_imagemagick', '1'),
+('thumbnails_imagemagick_imagick', '0'),
+('thumbnails_imagemagick_path', 'magick'),
 ('thumbnails_imagemagick_ext', 'psd,psb,eps,tst,plt,ai,pdf,jpg,jpeg,gif,png,jpe,erf,dng,cr2,cr3,crw,3fr,fff,ppm,raw,kdc,dcr,nef,mef,mos,nrw,orf,raf,mrw,mdc,rw2,pef,x3f,srw,arw,iiq,svg,tif,tiff,heic,webp,exr'),
 ('thumbnails_ffmpeg', '1'),
 ('thumbnails_ffmpeg_path', 'ffmpeg'),
 ('thumbnails_ffmpeg_ext', 'mpg,mpeg,mp4,mov,avi,divx,mkv,wmv,rm,flv,asx,asf,swf,3gp,3g2,m4v,m2ts,mts,m2v,ogv,webm'),
+('thumbnails_libreoffice', '1'),
+('thumbnails_libreoffice_path', '/opt/libreoffice7.1/program/soffice'),
+('thumbnails_libreoffice_ext', 'doc,docx,ods,xls,xlsx,odt,ppt,pps,pptx,odp,rtf,txt,html,csv,tsv,md'),
+('thumbnails_filesize_limit_min', '8'),
+('thumbnails_small_filesize_check_res', '1'),
+('thumbnails_size', '170'),
+('thumbnails_stl', '1'),
+('thumbnails_stl_path', 'stl-thumb'),
+('thumbnails_pngquant_path', 'pngquant'),
+('ui_file_page_size', '300'),
+('ui_preview_size', 'automatic'),
+('ui_preview_filesize_limit_min', '4'),
+('ui_preview_small_filesize_check_res', '1'),
+('weblinks_default_mode', 'grid'),
 ('versioning_max', '2'),
 ('quota_warning_level', '90'),
 ('ui_default_language', 'english'),
 ('ui_display_language_menu', '1'),
-('ui_enable_download_cart', '1'),
 ('ui_double_click', 'preview'),
-('ui_login_logo', ''),
+('ui_login_logo', '?page=logo&version=2021.12.07'),
 ('ui_login_text', ''),
 ('ui_login_title', ''),
-('ui_title_logo', '1'),
-('ui_logo_url', NULL),
+('ui_title_logo', '0'),
+('ui_enable_favicons', '1'),
+('ui_logo_url', '?page=logo&version=2021.12.07'),
 ('ui_default_view', 'thumbnails'),
+('ui_enable_collections', '1'),
 ('gravatar_enabled', 1),
 ('upload_blocked_types', ''),
 ('allow_folder_notifications', '0'),
@@ -457,31 +478,22 @@ INSERT INTO `df_settings` (`var`, `val`) VALUES
 ('notifications_subject_template', '{$settings.app_title|safeHTML} notifications ({$info.actions[0].info.userInfo.name}: {$info.actions[0].info.actionDescription})'),
 ('ui_media_folders_music_enable', '1'),
 ('ui_media_folders_photos_enable', '1'),
-('ui_media_folders_videos_enable', '1'),
-('shares_subscribe_notifications', '1'),
+('ui_media_folders_videos_enable', '0'),
 ('guest_users', '1'),
 ('guest_users_delete', '1m'),
 ('ui_thumbs_in_detailed', '1'),
 ('ui_enable_rating', '1'),
 ('ui_photos_thumbnail_size', '200'),
-('ui_theme', 'blue'),
+('ui_theme', 'purple'),
+('ui_enable_download_cart', '0'),
 ('search_result_limit', '200'),
 ('search_mode', 'broad'),
-('disable_custom_action_admin_thumbnail_troubleshooter', '1'),
-('thumbnails_libreoffice', '0'),
-('thumbnails_libreoffice_ext', 'doc,docx,ods,xls,xlsx,odt,ppt,pps,pptx,odp,rtf,txt,html,csv,tsv,md'),
-('thumbnails_libreoffice_path', 'export HOME=/tmp && /opt/libreoffice6.4/program/soffice'),
-('thumbnails_small_filesize_check_res', '1'),
-('ui_preview_size', 'automatic'),
-('ui_preview_filesize_limit_min', '4'),
-('ui_preview_small_filesize_check_res', '1'),
-('weblinks_default_mode', 'grid'),
-('ui_enable_collections', '1'),
-('thumbnails_filesize_limit_min', '8'),
 ('download_accelerator', 'xsendfile'),
  ('plugins_html_editor_use_purifier', '1'),
 ('custom_action_html_editor_hide_create_new', '0'),
-('disable_custom_action_html_editor', '1');
+('disable_custom_action_html_editor', '1'),
+('ui_hide_dotfiles', '1'),
+('thumbnails_ffmpeg_ss', '1');
 
 CREATE TABLE IF NOT EXISTS `df_users` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -548,7 +560,7 @@ CREATE TABLE IF NOT EXISTS `df_users_permissions` (
   `upload_max_size` BIGINT(20) NULL DEFAULT NULL,
   `upload_limit_types` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `download` smallint(1) DEFAULT NULL,
-  `preview` SMALLINT(1) NULL DEFAULT '1',
+  `preview` smallint(1) NULL DEFAULT '1',
   `download_folders` smallint(1) DEFAULT NULL,
   `read_comments` smallint(1) DEFAULT NULL,
   `write_comments` smallint(1) DEFAULT NULL,
@@ -633,11 +645,9 @@ CREATE TABLE IF NOT EXISTS `df_oauth_clients` (
   UNIQUE KEY `cid` (`cid`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `df_oauth_clients` (`id`, `enabled`, `cid`, `secret`, `logo_url`, `name`, `publisher`, `description`, `website`, `publisher_website`) VALUES (NULL, 1, 'FileRun0000000000000000000Mobile', '0000000000000000NoSecret0000000000000000', 'https://filerun.com/images/logo-mobile-app.png', 'FileRun Mobile', 'Afian AB', 'Authentication for the mobile apps', 'https://filerun.com', 'https://afian.se');
-
-INSERT INTO `df_oauth_clients` (`id`, `enabled`, `cid`, `secret`, `logo_url`, `name`, `publisher`, `description`, `website`, `publisher_website`) VALUES (NULL, 1, 'Nextcloud0000000000000000000Apps', '0000000000000000NoSecret0000000000000000', 'https://filerun.com/images/nextcloud-square-logo.png', 'Nextcloud', 'Nextcloud GmbH', 'Authentication for the Nextcloud mobile apps', 'https://nextcloud.com/clients/', 'https://nextcloud.com');
-
-INSERT INTO `df_oauth_clients` (`id`, `enabled`, `cid`, `secret`, `logo_url`, `name`, `publisher`, `description`, `website`, `publisher_website`) VALUES (NULL, 1, 'Generic0000000000000000000WebDAV', '0000000000000000NoSecret0000000000000000', '', 'WebDAV', '', 'Authentication for the WebDAV apps', '', '');
+INSERT INTO `df_oauth_clients` (`id`, `enabled`, `cid`, `secret`, `logo_url`, `name`, `publisher`, `description`, `website`, `publisher_website`) VALUES (NULL, 1, 'FileRun0000000000000000000Mobile', '0000000000000000NoSecret0000000000000000', 'https://filerun.com/images/logo-mobile-app.png', 'FileRun Mobile', 'FileRUn, Lda', 'Authentication for the mobile apps', 'https://filerun.com', 'https://filerun.com');
+INSERT INTO `df_oauth_clients` (`id`, `enabled`, `cid`, `secret`, `logo_url`, `name`, `publisher`, `description`, `website`, `publisher_website`) VALUES (NULL, 1, 'Nextcloud0000000000000000000Apps', '0000000000000000NoSecret0000000000000000', 'https://filerun.com/images/nextcloud-square-logo.png', 'Nextcloud', 'Nextcloud GmbH', 'Authentication for the Nextcloud apps', 'https://nextcloud.com/install/#install-clients', 'https://nextcloud.com');
+INSERT INTO `df_oauth_clients` (`id`, `enabled`, `cid`, `secret`, `logo_url`, `name`, `publisher`, `description`, `website`, `publisher_website`) VALUES (NULL, 1, 'Generic0000000000000000000WebDAV', '0000000000000000NoSecret0000000000000000', 'http://www.webdav.org/images/webdav-logo.jpg', 'WebDAV Protocol', '', 'Authentication for the WebDAV apps', 'https://en.wikipedia.org/wiki/WebDAV', 'http://www.webdav.org');
 
 CREATE TABLE IF NOT EXISTS `df_oauth_client_redirect_uris` (
   `id` mediumint(8) NOT NULL AUTO_INCREMENT,
@@ -648,7 +658,6 @@ CREATE TABLE IF NOT EXISTS `df_oauth_client_redirect_uris` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `df_oauth_client_redirect_uris` (`id`, `cid`, `uri`) VALUES (1, 1, 'filerun://');
-
 INSERT INTO `df_oauth_client_redirect_uris` (`id`, `cid`, `uri`) VALUES (2, 2, 'nc://');
 
 CREATE TABLE IF NOT EXISTS `df_oauth_refresh_tokens` (
@@ -737,6 +746,7 @@ ALTER TABLE `df_oauth_session_scopes`
 CREATE TABLE `df_collections` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
+  `type` ENUM('regular','album') NOT NULL DEFAULT 'regular',
   `uid` mediumint(9) NOT NULL,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
