@@ -9,6 +9,9 @@ It is a full featured web based file manager with an easy to use user interface.
 
 Installation & Documentation
 ==================
+
+**Official Docker image: [https://hub.docker.com/r/filerun/filerun](filerun/filerun)**
+
 See https://docs.filerun.com/docker for the guide.
 
 License
