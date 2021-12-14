@@ -1,4 +1,4 @@
-FROM php:7.4-apache
+FROM php:7.4.26-apache-buster
 ENV FR_DB_HOST=db \
     FR_DB_PORT=3306 \
     FR_DB_NAME=filerun \
@@ -18,7 +18,7 @@ COPY autoconfig.php entrypoint.sh wait-for-it.sh import-db.sh filerun.setup.sql 
 
 # add PHP, extensions and third-party software
 RUN apt-get update \
-    && apt-get install -y \
+    && apt-get install -y --no-install-recommends \
         libapache2-mod-xsendfile \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
@@ -27,7 +27,6 @@ RUN apt-get update \
         libgif-dev \
         librsvg2-dev \
         libldap2-dev \
-        libxml2-dev \
         libzip-dev \
         libcurl4-gnutls-dev \
         libosmesa6-dev \
@@ -36,7 +35,6 @@ RUN apt-get update \
         libde265-dev \
         libheif-dev \
         libgl1 \
-        libraw20 \
         libraw-dev \
         libraw-bin \
         libltdl-dev \
@@ -94,6 +92,7 @@ RUN apt-get update \
     && echo "XSendFile On\nXSendFilePath /user-files" | tee "/etc/apache2/conf-available/filerun.conf" \
     && a2enconf filerun \
 #Cleanup \
+    && docker-php-source delete \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /tmp/* \
