@@ -3,6 +3,7 @@ version: '2'
 services:
   db:
     image: mariadb:10.1
+    container_name: mariadb
     environment:
       MYSQL_ROOT_PASSWORD: your_mysql_root_password
       MYSQL_USER: your_filerun_username
@@ -10,7 +11,6 @@ services:
       MYSQL_DATABASE: your_filerun_database
     volumes:
       - /filerun/db:/var/lib/mysql
-
   filerun:
     image: filerun/filerun
     container_name: filerun

@@ -1,4 +1,4 @@
-FROM php:7.4.26-apache-buster
+FROM php:7.4.27-apache-buster
 ENV FR_DB_HOST=db \
     FR_DB_PORT=3306 \
     FR_DB_NAME=filerun \
@@ -9,14 +9,10 @@ ENV FR_DB_HOST=db \
     APACHE_RUN_GROUP=user \
     APACHE_RUN_GROUP_ID=1000 \
     LIBVIPS_VERSION="8.12.1" \
-    LIBREOFFICE_VERSION="7.1.8"
+    LIBREOFFICE_VERSION="7.1.8" \
+    PHP_VERSION_SHORT="7.4"
 VOLUME ["/var/www/html", "/user-files"]
-# set recommended PHP.ini settings
-# see https://docs.filerun.com/php_configuration
-COPY filerun-optimization.ini /usr/local/etc/php/conf.d/
-COPY autoconfig.php entrypoint.sh wait-for-it.sh import-db.sh filerun.setup.sql supervisord.conf /
-
-# add PHP, extensions and third-party software
+COPY ./filerun /filerun
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         libapache2-mod-xsendfile \
@@ -34,6 +30,9 @@ RUN apt-get update \
         libopenexr-dev \
         libde265-dev \
         libheif-dev \
+        libopenjp2-7-dev \
+        libimagequant-dev \
+        libmagickcore-dev \
         libgl1 \
         libraw-dev \
         libraw-bin \
@@ -42,12 +41,12 @@ RUN apt-get update \
         liborc-0.4-dev \
         libcups2 \
         fftw3-dev \
-        locales \
         ffmpeg \
         pngquant \
         mariadb-client \
         unzip \
         cron \
+        locales \
         vim \
         supervisor \
     && mkdir /var/log/supervisord /var/run/supervisord \
@@ -56,20 +55,12 @@ RUN apt-get update \
     && docker-php-ext-configure ldap \
     && docker-php-ext-install -j$(nproc) pdo_mysql exif zip gd opcache ldap \
     && a2enmod rewrite \
-# Install ionCube \
+# Install ionCube
     && echo [Install ionCube] \
     && curl -o /tmp/ioncube.zip -L https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.zip \
     && PHP_EXT_DIR=$(php-config --extension-dir) \
-    && unzip -j /tmp/ioncube.zip ioncube/ioncube_loader_lin_7.4.so -d $PHP_EXT_DIR \
-    && echo "zend_extension=ioncube_loader_lin_7.4.so" >> /usr/local/etc/php/conf.d/00_ioncube_loader_lin_7.4.ini \
-# Install vips
-    && echo [Install vips ${LIBVIPS_VERSION}] \
-    && curl -o /tmp/vips.tar.gz -L https://github.com/libvips/libvips/releases/download/v${LIBVIPS_VERSION}/vips-${LIBVIPS_VERSION}.tar.gz \
-    && tar zvxf /tmp/vips.tar.gz -C /tmp \
-    && cd /tmp/vips-${LIBVIPS_VERSION} \
-    && ./configure --enable-debug=no --without-python $1 \
-    && make && make install \
-    && ldconfig \
+    && unzip -j /tmp/ioncube.zip ioncube/ioncube_loader_lin_${PHP_VERSION_SHORT}.so -d $PHP_EXT_DIR \
+    && echo "zend_extension=ioncube_loader_lin_${PHP_VERSION_SHORT}.so" >> /usr/local/etc/php/conf.d/00_ioncube_loader_lin_${PHP_VERSION_SHORT}.ini \
 # Install ImageMagick
     && echo [Install ImageMagick] \
     && curl -o /tmp/im.tar.gz -L https://download.imagemagick.org/ImageMagick/download/ImageMagick.tar.gz \
@@ -78,9 +69,17 @@ RUN apt-get update \
     && ./configure --with-modules \
     && make && make install \
     && ldconfig /usr/local/lib \
+# Install vips
+    && echo [Install vips ${LIBVIPS_VERSION}] \
+    && curl -o /tmp/vips.tar.gz -L https://github.com/libvips/libvips/releases/download/v${LIBVIPS_VERSION}/vips-${LIBVIPS_VERSION}.tar.gz \
+    && tar zvxf /tmp/vips.tar.gz -C /tmp \
+    && cd /tmp/vips-${LIBVIPS_VERSION} \
+    && ./configure \
+    && make && make install \
+    && ldconfig \
 # Install STL-THUMB
     && echo [Install STL-THUMB] \
-    && curl -o /tmp/stl-thumb.deb -L https://github.com/unlimitedbacon/stl-thumb/releases/download/v0.3.1/stl-thumb_0.3.1_amd64.deb \
+    && curl -o /tmp/stl-thumb.deb -L https://github.com/unlimitedbacon/stl-thumb/releases/download/v0.4.0/stl-thumb_0.4.0_amd64.deb \
     && dpkg -i /tmp/stl-thumb.deb \
 # Install LibreOffice
     && echo [Install LibreOffice ${LIBREOFFICE_VERSION}] \
@@ -96,10 +95,9 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /tmp/* \
-# Download FileRun installation package
-    && echo [Download FileRun installation package version 2021.12.07] \
-    && curl -o /filerun.zip -L 'https://f.afian.se/wl/?id=6QUVsGiFM4M5d4RTZlzhpJLehdqMsbKv&fmode=download&recipient=ZmlsZXJ1bi5jb20%3D' \
+    && mv /filerun/filerun-optimization.ini /usr/local/etc/php/conf.d/ \
+    && mkdir -p /user-files \
     && chown www-data:www-data /user-files \
-    && chmod +x /wait-for-it.sh /import-db.sh /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/usr/bin/supervisord", "-c", "/supervisord.conf"]
+    && chmod +x /filerun/entrypoint.sh
+ENTRYPOINT ["/filerun/entrypoint.sh"]
+CMD ["/usr/bin/supervisord", "-c", "/filerun/supervisord.conf"]
