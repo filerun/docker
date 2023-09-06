@@ -10,15 +10,11 @@ fi
 
 # Install FileRun on first run
 if [ ! -e /var/www/html/index.php ];  then
-	echo "[Downloading latest FileRun version]"
-  curl -o /filerun.zip -L 'https://filerun.com/download-latest-docker'
-	unzip -q /filerun.zip -d /var/www/html/
-	cp /filerun/overwrite_install_settings.temp.php /var/www/html/system/data/temp/
-	cp /filerun/.htaccess /var/www/html/
-	rm -f /filerun.zip
-	chown -R ${APACHE_RUN_USER}:${APACHE_RUN_GROUP} /var/www/html
-	chown ${APACHE_RUN_USER}:${APACHE_RUN_GROUP} /user-files
-	echo "Open this server in your browser to complete the FileRun installation."
+  chown ${APACHE_RUN_USER}:${APACHE_RUN_GROUP} /user-files
+	echo "The next step is to download the latest FileRun installation zip from the FileRun client account and upload its contents inside the 'html' mounted folder."
+	echo "Then change ownership of the files like this:"
+	echo "chown -R ${APACHE_RUN_USER}:${APACHE_RUN_GROUP} /var/www/html"
+	echo "Then open this server in your browser to complete the FileRun installation."
 fi
 
 exec "$@"
