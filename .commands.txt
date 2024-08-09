@@ -1,0 +1,1 @@
+docker build -t filerun/filerun:8.2 .
