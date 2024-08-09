@@ -10,7 +10,7 @@ $overwriteDefaultSettings = [
 	'thumbnails_ffmpeg_path' => 'ffmpeg',
 
 	'thumbnails_libreoffice' => '1',
-	'thumbnails_libreoffice_path' => '/opt/libreoffice7.5/program/soffice',
+	'thumbnails_libreoffice_path' => '/opt/libreoffice24.2/program/soffice',
 
 	'thumbnails_stl' => '1',
 	'thumbnails_stl_path' => 'stl-thumb',

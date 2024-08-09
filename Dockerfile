@@ -1,4 +1,4 @@
-FROM php:8.1.23-apache-bullseye
+FROM php:8.2.21-apache-bullseye
 ENV FR_DB_HOST=db \
 	FR_DB_PORT=3306 \
 	FR_DB_NAME=filerun \
@@ -8,12 +8,12 @@ ENV FR_DB_HOST=db \
 	APACHE_RUN_USER_ID=1000 \
 	APACHE_RUN_GROUP=user \
 	APACHE_RUN_GROUP_ID=1000 \
-	LIBVIPS_VERSION="8.14.4" \
-	LIBREOFFICE_VERSION="7.5.5" \
-	PHP_VERSION_SHORT="8.1"
+	LIBVIPS_VERSION="8.15.2" \
+	LIBREOFFICE_VERSION="24.2.5" \
+	PHP_VERSION_SHORT="8.2"
 VOLUME ["/var/www/html", "/user-files"]
 COPY ./filerun /filerun
-RUN apt-get update  \
+RUN apt-get update \
     && apt-get install -y --no-install-recommends \
 		libfreetype6-dev \
 #image formats \
@@ -35,6 +35,7 @@ RUN apt-get update  \
 		libltdl-dev \
 		libcups2 \
 ##libvips \
+        meson \
 		libgsf-1-dev \
 		glib2.0-dev \
 		libexpat1-dev \
@@ -68,6 +69,22 @@ RUN apt-get update  \
 	&& docker-php-ext-configure ldap \
 	&& docker-php-ext-install -j$(nproc) pdo_mysql exif zip gd opcache ldap \
 	&& a2enmod rewrite \
+# Install MariaDB
+#    && apt-get install -y mariadb-server mariadb-client \
+#    && MARIADB_MYSQL_SOCKET_DIRECTORY='/var/run/mysqld' \
+#    && mkdir -p $MARIADB_MYSQL_SOCKET_DIRECTORY \
+#    && chown root:mysql $MARIADB_MYSQL_SOCKET_DIRECTORY \
+#    && chmod 774 $MARIADB_MYSQL_SOCKET_DIRECTORY \
+#    # Make sure that NOBODY can access the server without a password
+#    && mysql -e "UPDATE mysql.user SET Password = PASSWORD('CHANGEME') WHERE User = 'root'" \
+#    # Kill the anonymous users
+#    && mysql -e "DROP USER ''@'localhost'" \
+#    # Because our hostname varies we'll use some Bash magic here.
+#    && mysql -e "DROP USER ''@'$(hostname)'" \
+#    # Kill off the demo database
+#    && mysql -e "DROP DATABASE test" \
+#    # Make our changes take effect
+#    && mysql -e "FLUSH PRIVILEGES" \
 # Install ionCube
     && echo [Install ionCube] \
 	&& curl -o /tmp/ioncube.zip -L https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.zip \
@@ -77,10 +94,11 @@ RUN apt-get update  \
 	&& rm -rf /tmp/ioncube \
 # Install STL-THUMB
     && echo [Install STL-THUMB] \
-    && curl -o /tmp/stl-thumb.deb -L https://github.com/unlimitedbacon/stl-thumb/releases/download/v0.4.0/stl-thumb_0.4.0_amd64.deb \
+    && curl -o /tmp/stl-thumb.deb -L https://github.com/unlimitedbacon/stl-thumb/releases/download/v0.5.0/stl-thumb_0.5.0_amd64.deb \
     && dpkg -i /tmp/stl-thumb.deb \
 # Install LibreOffice
     && echo [Install LibreOffice ${LIBREOFFICE_VERSION}] \
+    && apt-get install -y libxinerama1 libxslt1-dev \
     && curl -o /tmp/lo.tar.gz -L https://download.documentfoundation.org/libreoffice/stable/${LIBREOFFICE_VERSION}/deb/x86_64/LibreOffice_${LIBREOFFICE_VERSION}_Linux_x86-64_deb.tar.gz \
     && tar xvfz /tmp/lo.tar.gz -C /tmp \
     && dpkg -i /tmp/LibreOffice_*/DEBS/*.deb \
@@ -98,13 +116,16 @@ RUN apt-get update  \
 	&& ldconfig /usr/local/lib \
 # Install vips from source
     && echo [Install vips ${LIBVIPS_VERSION}] \
-	&& curl -o /tmp/vips.tar.gz -L https://github.com/libvips/libvips/releases/download/v${LIBVIPS_VERSION}/vips-${LIBVIPS_VERSION}.tar.gz \
+	&& curl -o /tmp/vips.tar.gz -L https://github.com/libvips/libvips/archive/refs/tags/v${LIBVIPS_VERSION}.tar.gz \
 	&& tar -zxf /tmp/vips.tar.gz -C /tmp \
-    && cd /tmp/vips-${LIBVIPS_VERSION} \
-    && ./configure \
-    && make && make install \
-	&& ldconfig \
+    && cd /tmp/libvips-${LIBVIPS_VERSION} \
+    && meson setup build-dir --buildtype=release --libdir=lib \
+    && cd build-dir \
+    && ninja \
+    && ninja install \
+    && ldconfig \
 #Cleanup \
+    && apt-get remove -y meson ninja-build \
     && docker-php-source delete \
     && apt-get clean \
     && rm -rf /tmp/* \
