@@ -114,6 +114,9 @@ RUN apt-get update \
     && ./configure --with-modules --with-gslib --without-magick-plus-plus --without-perl --without-x --disable-docs --disable-static \
     && make && make install \
 	&& ldconfig /usr/local/lib \
+# Install IMagick PHP extension \
+    && pecl install imagick \
+    && docker-php-ext-enable imagick \
 # Install vips from source
     && echo [Install vips ${LIBVIPS_VERSION}] \
 	&& curl -o /tmp/vips.tar.gz -L https://github.com/libvips/libvips/archive/refs/tags/v${LIBVIPS_VERSION}.tar.gz \
